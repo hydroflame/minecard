@@ -221,7 +221,10 @@ function onCardMovementComplete(this: HTMLElement): void {
     shuffleDiscardIntoDeck();
   }
 
-  tryApplyTool(getTool(this.dataset.resource ?? ""));
+  if (this.dataset.value === "pickaxe") {
+    const tool = getTool(this.dataset.resource ?? "");
+    if (tool) tryApplyTool(tool);
+  }
 }
 
 function onProductClick(elem: HTMLElement): () => void {
