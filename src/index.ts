@@ -168,12 +168,14 @@ function shuffleDiscardIntoDeck(): void {
 }
 
 function addCardToPile(pile: Pile, cardElem: HTMLElement, index: number): void {
+  if (!gameElem) return;
   if (pile.cards) {
     pile.cards.push(cardElem);
   }
   if (!pile.elem) return;
   const rect = pile.elem.getBoundingClientRect();
   const offset = getOffset(index);
+  const gameRect = gameElem.getBoundingClientRect();
   const x = rect.left - gameRect.left + offset.x;
   const y = rect.top - gameRect.top + offset.y;
   const r = offset.r;
