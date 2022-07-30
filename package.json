@@ -5,7 +5,8 @@
   "private": true,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "serve": "npx webpack serve --mode development"
+    "serve": "npx webpack serve --mode development",
+    "lint": "npx eslint src/**/*.ts --fix"
   },
   "repository": {
     "type": "git",

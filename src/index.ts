@@ -363,7 +363,7 @@ function makeStartingDeck(): void {
   for (let i = 0; i < deck.length; i++) {
     const p = {
       cards: pile.deck.cards,
-      elem: pile.deck.elem!,
+      elem: pile.deck.elem,
     };
     addCardToPile(p, deck[i], i);
     deck[i].style.zIndex = i;
