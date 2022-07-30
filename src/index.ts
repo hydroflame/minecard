@@ -265,11 +265,9 @@ function onProductClick(elem: HTMLElement): () => void {
 
 function tryApplyTool(data: any): void {
   if (!data) return;
-  if (data.tool == "pickaxe") {
-    clearInterval(pickaxeTimer);
-    pickaxeTimer = setInterval(drawCard, data.timer * 1000);
-    drawCard();
-  }
+  clearInterval(pickaxeTimer);
+  pickaxeTimer = setInterval(drawCard, data.timer * 1000);
+  drawCard();
 }
 
 function isAffordable(productElem: HTMLElement): boolean {
@@ -573,7 +571,6 @@ interface Pickaxe {
 }
 
 const TOOLS: {
-  [key: string]: any;
   pickaxe: Pickaxe[];
 } = {
   pickaxe: [
@@ -585,13 +582,11 @@ const TOOLS: {
 };
 
 function getTool(data: any, offset = 0): Pickaxe | undefined {
-  if (data.value in TOOLS) {
-    const tool = TOOLS[data.value];
+  if (data.value === "pickaxe") {
+    const tool = TOOLS.pickaxe;
     for (let i = 0; i < tool.length; i++) {
       if (tool[i].card.startsWith(data.resource)) {
-        const toolData = tool[i + offset];
-        if (toolData) toolData.tool = data.value;
-        return toolData;
+        return tool[i + offset];
       }
     }
   }
