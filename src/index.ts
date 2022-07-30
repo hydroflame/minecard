@@ -290,7 +290,7 @@ function showDeckScreen(): void {
     clone.style.transform = "";
     clone.classList.value = "card";
     clone.onclick = onDestroyCardClick;
-    container.appendChild(clone);
+    if (container) container.appendChild(clone);
   }
 
   updateDeckScreen();
