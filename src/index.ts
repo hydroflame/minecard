@@ -8,12 +8,10 @@ const pile: {
   deck: Pile;
   discard: Pile;
   pickaxeSlot: Pile;
-  cartSlot: Pile;
 } = {
   deck: { cards: [], elem: null },
   discard: { cards: [], elem: null },
   pickaxeSlot: { cards: [], elem: null },
-  cartSlot: { cards: [], elem: null },
 };
 
 const drawing: HTMLElement[] = [];
@@ -38,7 +36,6 @@ function startGame(): void {
   pile.deck.elem = document.getElementById("deck");
   pile.discard.elem = document.getElementById("discard");
   pile.pickaxeSlot.elem = document.getElementById("pickaxeSlot");
-  pile.cartSlot.elem = document.getElementById("cartSlot");
 
   gameElem = document.getElementById("game");
   if (gameElem) gameRect = gameElem.getBoundingClientRect();
@@ -259,14 +256,11 @@ function onProductClick(): void {
 }
 
 function tryApplyTool(data: any): void {
-  if (data) {
-    if (data.tool == "pickaxe") {
-      clearInterval(pickaxeTimer);
-      pickaxeTimer = setInterval(drawCard, data.timer * 1000);
-      drawCard();
-    } else if (data.tool == "cart") {
-      updateResources();
-    }
+  if (!data) return;
+  if (data.tool == "pickaxe") {
+    clearInterval(pickaxeTimer);
+    pickaxeTimer = setInterval(drawCard, data.timer * 1000);
+    drawCard();
   }
 }
 
@@ -564,16 +558,9 @@ interface Pickaxe {
   timer: number;
 }
 
-interface Cart {
-  card: string;
-  cost: string;
-  inventoryIncrease: number;
-}
-
 const TOOLS: {
   [key: string]: any;
   pickaxe: Pickaxe[];
-  cart: Cart[];
 } = {
   pickaxe: [
     { card: "old pickaxe", timer: 1.5 },
@@ -581,7 +568,6 @@ const TOOLS: {
     { card: "iron pickaxe", cost: "iron 15", timer: 1 },
     { card: "diamond pickaxe", cost: "diamond 15", timer: 0.5 },
   ],
-  cart: [{ card: "stone cart", cost: "stone 10", inventoryIncrease: 5 }],
 };
 
 function getTool(data: any, offset = 0) {
