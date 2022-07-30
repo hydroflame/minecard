@@ -1,8 +1,19 @@
-const pile = {
-  deck: { cards: [] as HTMLElement[], elem: null as HTMLElement | null },
-  discard: { cards: [] as HTMLElement[], elem: null as HTMLElement | null },
-  pickaxeSlot: { cards: [] as HTMLElement[], elem: null as HTMLElement | null },
-  cartSlot: { cards: [] as HTMLElement[], elem: null as HTMLElement | null },
+interface Pile {
+  cards: HTMLElement[];
+  elem: HTMLElement | null;
+}
+
+const pile: {
+  [key: string]: Pile | undefined;
+  deck: Pile;
+  discard: Pile;
+  pickaxeSlot: Pile;
+  cartSlot: Pile;
+} = {
+  deck: { cards: [], elem: null },
+  discard: { cards: [], elem: null },
+  pickaxeSlot: { cards: [], elem: null },
+  cartSlot: { cards: [], elem: null },
 };
 
 const drawing: HTMLElement[] = [];
@@ -132,7 +143,7 @@ function adjustResource(resource: string, value: unknown): void {
     const max = resource == "stairs" ? MAX_LEVEL : MAX_INVENTORY;
     resources[resource] = Math.max(
       0,
-      Math.min(resources[resource] + count, max)
+      Math.min((resources[resource] ?? 0) + count, max)
     );
 
     updateResources();
@@ -155,11 +166,11 @@ function shuffleDiscardIntoDeck(): void {
   }
 }
 
-function addCardToPile(pile: any, cardElem: HTMLElement, index: number): void {
+function addCardToPile(pile: Pile, cardElem: HTMLElement, index: number): void {
   if (pile.cards) {
     pile.cards.push(cardElem);
   }
-
+  if (!pile.elem) return;
   const rect = pile.elem.getBoundingClientRect();
   const offset = getOffset(index);
   const x = rect.left - gameRect.left + offset.x;
@@ -183,14 +194,14 @@ function getOffset(index: number): Offset {
   };
 }
 
-function moveCard(cardElem: HTMLElement, toPile: any): HTMLElement {
+function moveCard(cardElem: HTMLElement, toPile: Pile): HTMLElement {
   drawing.push(cardElem);
 
   const moveDuration = 1000;
   const newIndex = toPile.cards.length;
 
   cardElem.style.transition = `transform ${moveDuration}ms ease-in-out`;
-  cardElem.style.zIndex = 100 + newIndex;
+  cardElem.style.zIndex = String(100 + newIndex);
 
   addCardToPile(toPile, cardElem, newIndex);
   setTimeout(onCardMovementComplete.bind(cardElem), moveDuration);
@@ -230,7 +241,7 @@ function onProductClick(): void {
 
       const protoCard = this.parentElement.querySelector(".card");
       const newCard = createDeckCard(this.parentElement.dataset.card);
-      addCardToPile({ elem: protoCard }, newCard, 0);
+      addCardToPile({ cards: [], elem: protoCard }, newCard, 0);
 
       let targetPile = pile.discard;
 
@@ -260,9 +271,11 @@ function tryApplyTool(data: any): void {
 }
 
 function isAffordable(productElem: HTMLElement): boolean {
-  const resource: any = productElem.dataset.resource;
+  const resource = productElem.dataset.resource ?? "";
   if (resource in resources) {
-    return resources[resource] >= parseInt(productElem.dataset.cost ?? "");
+    return (
+      (resources[resource] ?? 0) >= parseInt(productElem.dataset.cost ?? "")
+    );
   }
   return true; // must be free
 }
@@ -312,14 +325,14 @@ function closeDeckScreen(): void {
   }
 }
 
-function tryRemoveCard(data: any, pile: any): boolean {
+function tryRemoveCard(data: any, pile: Pile): boolean {
   for (let i = 0; i < pile.cards.length; i++) {
     const card = pile.cards[i];
     if (
       card.dataset.resource == data.resource &&
       card.dataset.value == data.value
     ) {
-      card.parentElement.removeChild(card);
+      card.parentElement?.removeChild(card);
       pile.cards.splice(i, 1);
       return true;
     }
@@ -354,7 +367,11 @@ function makeStartingDeck(): void {
   deck = shuffleCards(deck);
 
   for (let i = 0; i < deck.length; i++) {
-    addCardToPile(pile.deck, deck[i], i);
+    const p = {
+      cards: pile.deck.cards,
+      elem: pile.deck.elem!,
+    };
+    addCardToPile(p, deck[i], i);
     deck[i].style.zIndex = i;
     deck[i].classList.add("face-down");
   }
