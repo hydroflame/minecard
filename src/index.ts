@@ -17,7 +17,6 @@ const pile: {
 const drawing: HTMLElement[] = [];
 
 let gameElem: HTMLElement | null;
-let gameRect: DOMRect;
 let storeElem: HTMLElement | null;
 let deckScreenElem: HTMLElement | null;
 
@@ -38,7 +37,6 @@ function startGame(): void {
   pile.pickaxeSlot.elem = document.getElementById("pickaxeSlot");
 
   gameElem = document.getElementById("game");
-  if (gameElem) gameRect = gameElem.getBoundingClientRect();
 
   storeElem = document.getElementById("store");
   deckScreenElem = document.getElementById("deck-screen");
