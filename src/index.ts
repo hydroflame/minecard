@@ -319,10 +319,12 @@ function onDestroyCardClick(): void {
 }
 
 function closeDeckScreen(): void {
+  if (!deckScreenElem) return;
   deckScreenElem.style.display = "none";
 
   const container = deckScreenElem.querySelector(".card-container");
-  while (container.firstChild) {
+
+  while (container && container.firstChild) {
     container.removeChild(container.firstChild);
   }
 }
