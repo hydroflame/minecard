@@ -1,8 +1,8 @@
 let pile = {
-  deck: { cards: [] as any[], elem: null as HTMLElement | null },
-  discard: { cards: [] as any[], elem: null as HTMLElement | null },
-  pickaxeSlot: { cards: [] as any[], elem: null as HTMLElement | null },
-  cartSlot: { cards: [] as any[], elem: null as HTMLElement | null },
+  deck: { cards: [] as HTMLElement[], elem: null as HTMLElement | null },
+  discard: { cards: [] as HTMLElement[], elem: null as HTMLElement | null },
+  pickaxeSlot: { cards: [] as HTMLElement[], elem: null as HTMLElement | null },
+  cartSlot: { cards: [] as HTMLElement[], elem: null as HTMLElement | null },
 };
 
 let drawing: HTMLElement[] = [];
@@ -62,7 +62,7 @@ function updateResources(): void {
 }
 
 function shuffleCards<T>(cardElems: T[]): T[] {
-  const shuffledCards: any[] = [];
+  const shuffledCards: T[] = [];
   while (cardElems.length) {
     const r = Math.floor(Math.random() * cardElems.length);
     shuffledCards.push(cardElems[r]);
@@ -100,9 +100,9 @@ function upgradeRandomCard(): void {
     for (let i = pile.discard.cards.length - 1; i >= 0; i--) {
       const c = pile.discard.cards[i];
       if (
-        c.dataset.resource in resources &&
+        (c.dataset.resource ?? "") in resources &&
         c.dataset.resource != "stairs" &&
-        parseInt(c.dataset.value) < 10
+        parseInt(String(c.dataset.value)) < 10
       ) {
         card = c;
         break;
@@ -266,9 +266,9 @@ function showDeckScreen(): void {
   const cards = pile.deck.cards.concat(pile.discard.cards);
 
   for (let i = 0; i < cards.length; i++) {
-    let clone = cards[i].cloneNode(true);
-    clone.style.transform = null;
-    clone.classList = "card";
+    let clone = cards[i].cloneNode(true) as HTMLElement;
+    clone.style.transform = "";
+    clone.classList.value = "card";
     clone.onclick = onDestroyCardClick;
     container.appendChild(clone);
   }
@@ -360,6 +360,7 @@ function createDeckCard(data: string): HTMLDivElement {
 
 function makeStore(): void {
   STORE_CONTENTS.forEach(function (c) {
+    if (!storeElem) return;
     let product = createProduct(c);
     storeElem.appendChild(product);
     const e: HTMLElement | null = product.querySelector(".buy-button");
