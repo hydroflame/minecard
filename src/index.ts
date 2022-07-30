@@ -58,8 +58,8 @@ function updateResources(): void {
   for (const resource in resources) {
     const elem = document.querySelector(".inventory-slot." + resource);
     if (elem) {
-      const e = elem.querySelector(".current");
-      if (e) (e as any).innerText = resources[resource];
+      const e: HTMLElement | null = elem.querySelector(".current");
+      if (e) e.innerText = String(resources[resource]);
     }
   }
 
@@ -210,8 +210,8 @@ function moveCard(cardElem: HTMLElement, toPile: Pile): HTMLElement {
   return cardElem;
 }
 
-function onCardMovementComplete(): void {
-  this.style.zIndex -= 100;
+function onCardMovementComplete(this: HTMLElement): void {
+  this.style.zIndex = String(100 - parseFloat(this.style.zIndex));
   this.classList.remove("flipping-up", "flipping-down");
 
   const i = drawing.indexOf(this);
@@ -224,24 +224,21 @@ function onCardMovementComplete(): void {
   tryApplyTool(getTool(this.dataset));
 }
 
-function onDeckCardClick(): void {
-  if (pile.deck.cards.indexOf(this) > -1) {
-    drawCard();
-  }
-}
-
-function onProductClick(): void {
-  if (isAffordable(this.parentElement)) {
-    if (this.parentElement.dataset.ability == "purge") {
+function onProductClick(this: HTMLElement): void {
+  const parent = this.parentElement;
+  if (!parent) return;
+  if (isAffordable(parent)) {
+    if (parent.dataset.ability == "purge") {
       showDeckScreen();
-    } else if (this.parentElement.dataset.card) {
+    } else if (parent.dataset.card) {
       adjustResource(
-        this.parentElement.dataset.resource,
-        -this.parentElement.dataset.cost
+        parent.dataset.resource ?? "",
+        -parseFloat(parent.dataset.cost ?? "0")
       );
 
-      const protoCard = this.parentElement.querySelector(".card");
-      const newCard = createDeckCard(this.parentElement.dataset.card);
+      const protoCard: HTMLElement | null = parent.querySelector(".card");
+      if (!protoCard) return;
+      const newCard = createDeckCard(parent.dataset.card);
       addCardToPile({ cards: [], elem: protoCard }, newCard, 0);
 
       let targetPile = pile.discard;
@@ -251,7 +248,7 @@ function onProductClick(): void {
         targetPile = pile.pickaxeSlot;
 
         const nextTool = getTool(protoCard.dataset, 1);
-        replaceProduct(this.parentElement, nextTool);
+        replaceProduct(parent, nextTool);
       }
 
       requestAnimationFrame(() => moveCard(newCard, targetPile));
