@@ -224,36 +224,39 @@ function onCardMovementComplete(this: HTMLElement): void {
   tryApplyTool(getTool(this.dataset));
 }
 
-function onProductClick(this: HTMLElement): void {
-  const parent = this.parentElement;
-  if (!parent) return;
-  if (isAffordable(parent)) {
-    if (parent.dataset.ability == "purge") {
-      showDeckScreen();
-    } else if (parent.dataset.card) {
-      adjustResource(
-        parent.dataset.resource ?? "",
-        -parseFloat(parent.dataset.cost ?? "0")
-      );
+function onProductClick(elem: HTMLElement): () => void {
+  return () => {
+    const parent = elem.parentElement;
+    if (!parent) return;
+    if (isAffordable(parent)) {
+      if (parent.dataset.ability == "purge") {
+        showDeckScreen();
+      } else if (parent.dataset.card) {
+        adjustResource(
+          parent.dataset.resource ?? "",
+          -parseFloat(parent.dataset.cost ?? "0")
+        );
 
-      const protoCard: HTMLElement | null = parent.querySelector(".card");
-      if (!protoCard) return;
-      const newCard = createDeckCard(parent.dataset.card);
-      addCardToPile({ cards: [], elem: protoCard }, newCard, 0);
+        const protoCard: HTMLElement | null = parent.querySelector(".card");
+        if (!protoCard) return;
+        const newCard = createDeckCard(parent.dataset.card);
+        addCardToPile({ cards: [], elem: protoCard }, newCard, 0);
 
-      let targetPile = pile.discard;
+        let targetPile = pile.discard;
 
-      const toolPile = protoCard.dataset.value + "Slot";
-      if (toolPile in pile) {
-        targetPile = pile.pickaxeSlot;
+        const toolPile = protoCard.dataset.value + "Slot";
+        if (toolPile in pile) {
+          targetPile = pile.pickaxeSlot;
 
-        const nextTool = getTool(protoCard.dataset, 1);
-        replaceProduct(parent, nextTool);
+          const nextTool = getTool(protoCard.dataset, 1);
+          if (nextTool)
+            replaceProduct(parent, { ...nextTool, level: 0, cost: "" });
+        }
+
+        requestAnimationFrame(() => moveCard(newCard, targetPile));
       }
-
-      requestAnimationFrame(() => moveCard(newCard, targetPile));
     }
-  }
+  };
 }
 
 function tryApplyTool(data: any): void {
@@ -304,7 +307,7 @@ function updateDeckScreen(): void {
   }
 }
 
-function onDestroyCardClick(): void {
+function onDestroyCardClick(this: HTMLElement): void {
   if (resources.tnt >= getDestroyCost()) {
     if (!tryRemoveCard(this.dataset, pile.deck)) {
       tryRemoveCard(this.dataset, pile.discard);
@@ -359,7 +362,7 @@ function updateBgColor(): void {
 }
 
 function makeStartingDeck(): void {
-  let deck: any[] = [];
+  let deck: HTMLDivElement[] = [];
   STARTING_DECK.forEach(function (c) {
     for (let n = 0; n < c.count; n++) {
       deck.push(createDeckCard(c.card));
@@ -373,7 +376,7 @@ function makeStartingDeck(): void {
       elem: pile.deck.elem,
     };
     addCardToPile(p, deck[i], i);
-    deck[i].style.zIndex = i;
+    deck[i].style.zIndex = String(i);
     deck[i].classList.add("face-down");
   }
 }
@@ -390,7 +393,7 @@ function makeStore(): void {
     const product = createProduct(c);
     storeElem.appendChild(product);
     const e: HTMLElement | null = product.querySelector(".buy-button");
-    if (e) e.onclick = onProductClick;
+    if (e) e.onclick = onProductClick(e);
   });
 }
 
@@ -495,7 +498,7 @@ function getCardHTML(resource: string, value: string | number): string {
         : '<div class="description label">Upgrade a resource card.</div>';
   } else if (isNaN(parseInt(String(value)))) {
     topHTML = `<span class="name label">${resource} ${value}</span>`;
-    const timer = getTool({ resource, value }).timer;
+    const timer = getTool({ resource, value })?.timer;
     bottomHTML = `<div class="description label">Mines a card every ${timer}s.</div>`;
   } else {
     topHTML = `<div class="top label"><span className="count">${value}</span></div>`;
@@ -533,8 +536,8 @@ interface StartingCardCount {
 }
 
 const STARTING_DECK: StartingCardCount[] = [
-  { card: "stone 1", count: 8 },
-  { card: "stairs 1", count: 1 },
+  { card: "stone 1", count: 1 },
+  { card: "tnt 100", count: 1 },
 ];
 
 interface StoreItem {
@@ -577,7 +580,7 @@ const TOOLS: {
   ],
 };
 
-function getTool(data: any, offset = 0) {
+function getTool(data: any, offset = 0): Pickaxe | undefined {
   if (data.value in TOOLS) {
     const tool = TOOLS[data.value];
     for (let i = 0; i < tool.length; i++) {
