@@ -108,7 +108,7 @@ function applyCard(card: HTMLElement): void {
   if (card.dataset.resource == "upgrade") {
     upgradeRandomCard();
   } else {
-    adjustResource(card.dataset.resource ?? "", card.dataset.value);
+    adjustResource(card.dataset.resource ?? "", card.dataset.value ?? 0);
   }
 }
 
@@ -136,7 +136,7 @@ function upgradeRandomCard(): void {
   }
 }
 
-function adjustResource(resource: string, value: unknown): void {
+function adjustResource(resource: string, value: string | number): void {
   const count = parseInt(String(value));
   if (resource in resources && !isNaN(count)) {
     const max = resource == "stairs" ? MAX_LEVEL : MAX_INVENTORY;
