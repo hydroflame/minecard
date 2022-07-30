@@ -250,7 +250,11 @@ function onProductClick(elem: HTMLElement): () => void {
 
           const nextTool = getTool(protoCard.dataset, 1);
           if (nextTool)
-            replaceProduct(parent, { ...nextTool, level: 0, cost: "" });
+            replaceProduct(parent, {
+              ...nextTool,
+              level: 0,
+              cost: nextTool.cost ?? "",
+            });
         }
 
         requestAnimationFrame(() => moveCard(newCard, targetPile));
