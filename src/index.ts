@@ -14,7 +14,14 @@ let deckScreenElem: any;
 
 let pickaxeTimer: NodeJS.Timer;
 
-const resources: any = { stone: 0, iron: 0, diamond: 0, tnt: 0, stairs: 0 };
+const resources: {
+  [key: string]: number | undefined;
+  stone: number;
+  iron: number;
+  diamond: number;
+  tnt: number;
+  stairs: number;
+} = { stone: 0, iron: 0, diamond: 0, tnt: 0, stairs: 0 };
 
 function startGame(): void {
   pile.deck.elem = document.getElementById("deck");
