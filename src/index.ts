@@ -450,7 +450,7 @@ function setCard(cardElem: any, data: any) {
   cardElem.dataset.value = value;
 }
 
-function getCardHTML(resource: any, value: any) {
+function getCardHTML(resource: string, value: string | number): string {
   let contentHTML = "";
   let topHTML = "";
   let bottomHTML = "";
@@ -461,7 +461,7 @@ function getCardHTML(resource: any, value: any) {
       resource == "stairs"
         ? `<div class="description label">Descend one level deeper.</div>`
         : `<div class="description label">Upgrade a resource card.</div>`;
-  } else if (isNaN(parseInt(value))) {
+  } else if (isNaN(parseInt(String(value)))) {
     topHTML = `<span class="name label">${resource} ${value}</span>`;
     const timer = getTool({ resource: resource, value: value }).timer;
     bottomHTML = `<div class="description label">Mines a card every ${timer}s.</div>`;
@@ -495,12 +495,24 @@ function getCardHTML(resource: any, value: any) {
 const MAX_INVENTORY = 999;
 const MAX_LEVEL = 100;
 
-const STARTING_DECK = [
+interface StartingCardCount {
+  card: string;
+  count: number;
+}
+
+const STARTING_DECK: StartingCardCount[] = [
   { card: "stone 1", count: 8 },
   { card: "stairs 1", count: 1 },
 ];
 
-const STORE_CONTENTS = [
+interface StoreItem {
+  card?: string;
+  ability?: string;
+  cost: string;
+  level: number;
+}
+
+const STORE_CONTENTS: StoreItem[] = [
   { card: "old pickaxe", cost: "", level: 0 },
   { card: "stone 1", cost: "", level: 1 },
   { card: "stone 3", cost: "stone 5", level: 1 },
