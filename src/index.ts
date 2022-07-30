@@ -221,7 +221,7 @@ function onCardMovementComplete(this: HTMLElement): void {
     shuffleDiscardIntoDeck();
   }
 
-  tryApplyTool(getTool(this.dataset));
+  tryApplyTool(getTool(this.dataset.resource ?? ""));
 }
 
 function onProductClick(elem: HTMLElement): () => void {
@@ -248,7 +248,7 @@ function onProductClick(elem: HTMLElement): () => void {
         if (toolPile in pile) {
           targetPile = pile.pickaxeSlot;
 
-          const nextTool = getTool(protoCard.dataset, 1);
+          const nextTool = getTool(protoCard.dataset.resource ?? "", 1);
           if (nextTool)
             replaceProduct(parent, {
               ...nextTool,
@@ -291,7 +291,7 @@ function showDeckScreen(): void {
     const clone = cards[i].cloneNode(true) as HTMLElement;
     clone.style.transform = "";
     clone.classList.value = "card";
-    clone.onclick = onDestroyCardClick;
+    clone.onclick = onDestroyCardClick(clone);
     if (container) container.appendChild(clone);
   }
 
@@ -309,15 +309,17 @@ function updateDeckScreen(): void {
   }
 }
 
-function onDestroyCardClick(this: HTMLElement): void {
-  if (resources.tnt >= getDestroyCost()) {
-    if (!tryRemoveCard(this.dataset, pile.deck)) {
-      tryRemoveCard(this.dataset, pile.discard);
+function onDestroyCardClick(elem: HTMLElement): () => void {
+  return () => {
+    if (resources.tnt >= getDestroyCost()) {
+      if (!tryRemoveCard(elem.dataset, pile.deck)) {
+        tryRemoveCard(elem.dataset, pile.discard);
+      }
+      adjustResource("tnt", -getDestroyCost());
+      elem.classList.add("destroyed");
+      elem.onclick = null;
     }
-    adjustResource("tnt", -getDestroyCost());
-    this.classList.add("destroyed");
-    this.onclick = null;
-  }
+  };
 }
 
 function closeDeckScreen(): void {
@@ -500,7 +502,7 @@ function getCardHTML(resource: string, value: string | number): string {
         : '<div class="description label">Upgrade a resource card.</div>';
   } else if (isNaN(parseInt(String(value)))) {
     topHTML = `<span class="name label">${resource} ${value}</span>`;
-    const timer = getTool({ resource, value })?.timer;
+    const timer = getTool(resource)?.timer;
     bottomHTML = `<div class="description label">Mines a card every ${timer}s.</div>`;
   } else {
     topHTML = `<div class="top label"><span className="count">${value}</span></div>`;
@@ -581,13 +583,11 @@ const TOOLS: {
   ],
 };
 
-function getTool(data: any, offset = 0): Pickaxe | undefined {
-  if (data.value === "pickaxe") {
-    const tool = TOOLS.pickaxe;
-    for (let i = 0; i < tool.length; i++) {
-      if (tool[i].card.startsWith(data.resource)) {
-        return tool[i + offset];
-      }
+function getTool(resource: string, offset = 0): Pickaxe | undefined {
+  const tool = TOOLS.pickaxe;
+  for (let i = 0; i < tool.length; i++) {
+    if (tool[i].card.startsWith(resource)) {
+      return tool[i + offset];
     }
   }
 }
