@@ -263,7 +263,7 @@ function onProductClick(elem: HTMLElement): () => void {
   };
 }
 
-function tryApplyTool(data: any): void {
+function tryApplyTool(data: Pickaxe): void {
   if (!data) return;
   clearInterval(pickaxeTimer);
   pickaxeTimer = setInterval(drawCard, data.timer * 1000);
