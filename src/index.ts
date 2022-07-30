@@ -1,11 +1,11 @@
-let pile = {
+const pile = {
   deck: { cards: [] as HTMLElement[], elem: null as HTMLElement | null },
   discard: { cards: [] as HTMLElement[], elem: null as HTMLElement | null },
   pickaxeSlot: { cards: [] as HTMLElement[], elem: null as HTMLElement | null },
   cartSlot: { cards: [] as HTMLElement[], elem: null as HTMLElement | null },
 };
 
-let drawing: HTMLElement[] = [];
+const drawing: HTMLElement[] = [];
 
 let gameElem: HTMLElement | null;
 let gameRect: DOMRect;
@@ -14,7 +14,7 @@ let deckScreenElem: any;
 
 let pickaxeTimer: NodeJS.Timer;
 
-let resources: any = { stone: 0, iron: 0, diamond: 0, tnt: 0, stairs: 0 };
+const resources: any = { stone: 0, iron: 0, diamond: 0, tnt: 0, stairs: 0 };
 
 function startGame(): void {
   pile.deck.elem = document.getElementById("deck");
@@ -36,17 +36,17 @@ function startGame(): void {
 }
 
 function updateResources(): void {
-  for (let resource in resources) {
-    let elem = document.querySelector(".inventory-slot." + resource);
+  for (const resource in resources) {
+    const elem = document.querySelector(".inventory-slot." + resource);
     if (elem) {
       const e = elem.querySelector(".current");
       if (e) (e as any).innerText = resources[resource];
     }
   }
 
-  if (storeElem)
+  if (storeElem) {
     for (let i = 0; i < storeElem.children.length; i++) {
-      let product = storeElem.children[i] as HTMLElement;
+      const product = storeElem.children[i] as HTMLElement;
 
       if (product.dataset.ability == "purge") {
         product.dataset.cost = String(getDestroyCost());
@@ -56,6 +56,7 @@ function updateResources(): void {
       }
       product.classList.toggle("unaffordable", !isAffordable(product));
     }
+  }
 
   updateDeckScreen();
   updateBgColor();
@@ -154,9 +155,9 @@ function addCardToPile(pile: any, cardElem: HTMLElement, index: number): void {
 
   const rect = pile.elem.getBoundingClientRect();
   const offset = getOffset(index);
-  let x = rect.left - gameRect.left + offset.x;
-  let y = rect.top - gameRect.top + offset.y;
-  let r = offset.r;
+  const x = rect.left - gameRect.left + offset.x;
+  const y = rect.top - gameRect.top + offset.y;
+  const r = offset.r;
 
   cardElem.style.transform = `translate(${x}px,${y}px) rotate(${r}deg)`;
 }
@@ -266,7 +267,7 @@ function showDeckScreen(): void {
   const cards = pile.deck.cards.concat(pile.discard.cards);
 
   for (let i = 0; i < cards.length; i++) {
-    let clone = cards[i].cloneNode(true) as HTMLElement;
+    const clone = cards[i].cloneNode(true) as HTMLElement;
     clone.style.transform = "";
     clone.classList.value = "card";
     clone.onclick = onDestroyCardClick;
@@ -306,7 +307,7 @@ function closeDeckScreen(): void {
 
 function tryRemoveCard(data: any, pile: any): boolean {
   for (let i = 0; i < pile.cards.length; i++) {
-    let card = pile.cards[i];
+    const card = pile.cards[i];
     if (
       card.dataset.resource == data.resource &&
       card.dataset.value == data.value
@@ -361,7 +362,7 @@ function createDeckCard(data: string): HTMLDivElement {
 function makeStore(): void {
   STORE_CONTENTS.forEach(function (c) {
     if (!storeElem) return;
-    let product = createProduct(c);
+    const product = createProduct(c);
     storeElem.appendChild(product);
     const e: HTMLElement | null = product.querySelector(".buy-button");
     if (e) e.onclick = onProductClick;
@@ -371,7 +372,7 @@ function makeStore(): void {
 function replaceProduct(productElem: HTMLElement, data?: StoreItem): void {
   if (data == null) {
     productElem.classList.add("soldout");
-    const buy: HTMLElement | null = productElem.querySelector(`.buy-button`);
+    const buy: HTMLElement | null = productElem.querySelector(".buy-button");
     if (buy) buy.onclick = null;
     return;
   }
@@ -436,7 +437,7 @@ function getBuyButtonHTML(data: string): string {
             <div class="resource-icon ${parts[0]}"></div>
         `;
   } else {
-    return `<span class="resource-count">Free</span>`;
+    return '<span class="resource-count">Free</span>';
   }
 }
 
@@ -448,9 +449,9 @@ function createCard(data: string): HTMLDivElement {
 }
 
 function setCard(cardElem: HTMLElement, data: string): void {
-  let parts = data.split(" ");
-  let resource = parts[0];
-  let value = parts[1];
+  const parts = data.split(" ");
+  const resource = parts[0];
+  const value = parts[1];
   cardElem.innerHTML = getCardHTML(resource, value);
   cardElem.dataset.resource = resource;
   cardElem.dataset.value = value;
@@ -465,11 +466,11 @@ function getCardHTML(resource: string, value: string | number): string {
     topHTML = `<span class="name label">${resource}</span>`;
     bottomHTML =
       resource == "stairs"
-        ? `<div class="description label">Descend one level deeper.</div>`
-        : `<div class="description label">Upgrade a resource card.</div>`;
+        ? '<div class="description label">Descend one level deeper.</div>'
+        : '<div class="description label">Upgrade a resource card.</div>';
   } else if (isNaN(parseInt(String(value)))) {
     topHTML = `<span class="name label">${resource} ${value}</span>`;
-    const timer = getTool({ resource: resource, value: value }).timer;
+    const timer = getTool({ resource, value }).timer;
     bottomHTML = `<div class="description label">Mines a card every ${timer}s.</div>`;
   } else {
     topHTML = `<div class="top label"><span className="count">${value}</span></div>`;
@@ -564,7 +565,7 @@ function getTool(data: any, offset = 0) {
     const tool = TOOLS[data.value];
     for (let i = 0; i < tool.length; i++) {
       if (tool[i].card.startsWith(data.resource)) {
-        let toolData = tool[i + offset];
+        const toolData = tool[i + offset];
         if (toolData) toolData.tool = data.value;
         return toolData;
       }
