@@ -343,29 +343,26 @@ function makeStartingDeck() {
   }
 }
 
-function createDeckCard(data: any) {
-  // "stone 2"
+function createDeckCard(data: string): HTMLDivElement {
   const cardElem = createCard(data);
-
   gameElem.appendChild(cardElem);
-  //cardElem.onclick = onDeckCardClick;
-
   return cardElem;
 }
 
-function makeStore() {
+function makeStore(): void {
   STORE_CONTENTS.forEach(function (c) {
     let product = createProduct(c);
     storeElem.appendChild(product);
-    const e = product.querySelector(".buy-button");
-    if (e) (e as any).onclick = onProductClick;
+    const e: HTMLElement | null = product.querySelector(".buy-button");
+    if (e) e.onclick = onProductClick;
   });
 }
 
-function replaceProduct(productElem: any, data: any) {
+function replaceProduct(productElem: HTMLElement, data?: StoreItem): void {
   if (data == null) {
     productElem.classList.add("soldout");
-    productElem.querySelector(`.buy-button`).onclick = null;
+    const buy: HTMLElement | null = productElem.querySelector(`.buy-button`);
+    if (buy) buy.onclick = null;
     return;
   }
 
@@ -373,17 +370,16 @@ function replaceProduct(productElem: any, data: any) {
 
   const cards = productElem.querySelectorAll(".card");
   for (let i = 0; i < cards.length; i++) {
-    setCard(cards[i], data.card);
+    setCard(cards[i] as HTMLElement, data.card ?? "");
   }
 
   const buyButton = productElem.querySelector(".buy-button");
-  buyButton.innerHTML = getBuyButtonHTML(data.cost);
+  if (buyButton) buyButton.innerHTML = getBuyButtonHTML(data.cost);
 
   productElem.classList.toggle("unaffordable", !isAffordable(productElem));
 }
 
-function createProduct(data: any) {
-  // {card: "stone 3", cost: "stone 9"},
+function createProduct(data: StoreItem): HTMLDivElement {
   const productElem = document.createElement("div");
   productElem.classList.add("product");
 
@@ -411,7 +407,7 @@ function createProduct(data: any) {
   return productElem;
 }
 
-function setProductData(productElem: any, data: any) {
+function setProductData(productElem: HTMLElement, data: StoreItem): void {
   productElem.dataset.card = data.card;
   productElem.dataset.ability = data.ability;
 
@@ -422,7 +418,7 @@ function setProductData(productElem: any, data: any) {
   }
 }
 
-function getBuyButtonHTML(data: any) {
+function getBuyButtonHTML(data: string): string {
   const parts = data.split(" ");
   if (data) {
     return `
@@ -434,14 +430,14 @@ function getBuyButtonHTML(data: any) {
   }
 }
 
-function createCard(data: any) {
+function createCard(data: string): HTMLDivElement {
   const cardElem = document.createElement("div");
   cardElem.classList.add("card");
   setCard(cardElem, data);
   return cardElem;
 }
 
-function setCard(cardElem: any, data: any) {
+function setCard(cardElem: HTMLElement, data: string): void {
   let parts = data.split(" ");
   let resource = parts[0];
   let value = parts[1];
