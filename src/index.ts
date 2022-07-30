@@ -194,13 +194,13 @@ function onCardMovementComplete() {
   tryApplyTool(getTool(this.dataset));
 }
 
-function onDeckCardClick(mouseEvent: any) {
+function onDeckCardClick(): void {
   if (pile.deck.cards.indexOf(this) > -1) {
     drawCard();
   }
 }
 
-function onProductClick(mouseEvent: any) {
+function onProductClick(): void {
   if (isAffordable(this.parentElement)) {
     if (this.parentElement.dataset.ability == "purge") {
       showDeckScreen();
@@ -229,28 +229,27 @@ function onProductClick(mouseEvent: any) {
   }
 }
 
-function tryApplyTool(data: any) {
+function tryApplyTool(data: any): void {
   if (data) {
     if (data.tool == "pickaxe") {
       clearInterval(pickaxeTimer);
       pickaxeTimer = setInterval(drawCard, data.timer * 1000);
       drawCard();
     } else if (data.tool == "cart") {
-      // inventorySize += data.inventoryIncrease;
       updateResources();
     }
   }
 }
 
-function isAffordable(productElem: any) {
-  const resource = productElem.dataset.resource;
+function isAffordable(productElem: HTMLElement): boolean {
+  const resource: any = productElem.dataset.resource;
   if (resource in resources) {
-    return resources[resource] >= parseInt(productElem.dataset.cost);
+    return resources[resource] >= parseInt(productElem.dataset.cost ?? "");
   }
   return true; // must be free
 }
 
-function showDeckScreen() {
+function showDeckScreen(): void {
   deckScreenElem.style.display = "flex";
 
   const container = deckScreenElem.querySelector(".card-container");
@@ -267,7 +266,7 @@ function showDeckScreen() {
   updateDeckScreen();
 }
 
-function updateDeckScreen() {
+function updateDeckScreen(): void {
   if (deckScreenElem.style.display != "none") {
     const cost = getDestroyCost();
     deckScreenElem.querySelector(".resource-count").innerText = cost;
@@ -275,7 +274,7 @@ function updateDeckScreen() {
   }
 }
 
-function onDestroyCardClick() {
+function onDestroyCardClick(): void {
   if (resources.tnt >= getDestroyCost()) {
     if (!tryRemoveCard(this.dataset, pile.deck)) {
       tryRemoveCard(this.dataset, pile.discard);
@@ -286,7 +285,7 @@ function onDestroyCardClick() {
   }
 }
 
-function closeDeckScreen() {
+function closeDeckScreen(): void {
   deckScreenElem.style.display = "none";
 
   const container = deckScreenElem.querySelector(".card-container");
@@ -295,7 +294,7 @@ function closeDeckScreen() {
   }
 }
 
-function tryRemoveCard(data: any, pile: any) {
+function tryRemoveCard(data: any, pile: any): boolean {
   for (let i = 0; i < pile.cards.length; i++) {
     let card = pile.cards[i];
     if (
@@ -310,7 +309,7 @@ function tryRemoveCard(data: any, pile: any) {
   return false;
 }
 
-function updateBgColor() {
+function updateBgColor(): void {
   const level = resources.stairs;
   const sectionSize = MAX_LEVEL / (BG_COLORS.length - 1);
 
@@ -327,7 +326,7 @@ function updateBgColor() {
   gameElem.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
 }
 
-function makeStartingDeck() {
+function makeStartingDeck(): void {
   let deck: any[] = [];
   STARTING_DECK.forEach(function (c) {
     for (let n = 0; n < c.count; n++) {
