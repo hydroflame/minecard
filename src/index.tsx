@@ -226,9 +226,7 @@ function moveCard(cardElem: HTMLElement, toPile: Pile): HTMLElement {
 
 function onCardMovementComplete(elem: HTMLElement): () => void {
   return () => {
-    console.log(elem.style.zIndex);
     elem.style.zIndex = String(parseFloat(elem.style.zIndex) - 100);
-    console.log(elem.style.zIndex);
     elem.classList.remove("flipping-up", "flipping-down");
 
     const i = drawing.indexOf(elem);
