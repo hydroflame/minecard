@@ -1,5 +1,6 @@
 import React from "react";
 import { createRoot, Root } from "react-dom/client";
+import { BuyButtonText } from "./BuyButtonText";
 import { Card } from "./Card";
 import { Inventory } from "./Inventory";
 
@@ -289,7 +290,7 @@ function tryApplyTool(data: Pickaxe): void {
   drawCard();
 }
 
-function isAffordable(productElem: HTMLElement): boolean {
+export function isAffordable(productElem: HTMLElement): boolean {
   const resource = productElem.dataset.resource ?? "";
   if (resource in resources) {
     return (
@@ -436,7 +437,10 @@ function replaceProduct(productElem: HTMLElement, data?: StoreItem): void {
   }
 
   const buyButton = productElem.querySelector(".buy-button");
-  if (buyButton) buyButton.innerHTML = getBuyButtonHTML(data.cost);
+  if (buyButton) {
+    const container = createRoot(buyButton);
+    container.render(<BuyButtonText data={data.cost} />);
+  }
 
   productElem.classList.toggle("unaffordable", !isAffordable(productElem));
 }
@@ -463,7 +467,8 @@ function createProduct(data: StoreItem): HTMLDivElement {
 
   const buyButton = document.createElement("div");
   buyButton.classList.add("buy-button");
-  buyButton.innerHTML = getBuyButtonHTML(data.cost);
+  const container = createRoot(buyButton);
+  container.render(<BuyButtonText data={data.cost} />);
   productElem.appendChild(buyButton);
 
   return productElem;
