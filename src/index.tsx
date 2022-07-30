@@ -1,3 +1,7 @@
+import React from "react";
+import { createRoot, Root } from "react-dom/client";
+import { Inventory } from "./Inventory";
+
 interface Pile {
   cards: HTMLElement[];
   elem: HTMLElement | null;
@@ -19,6 +23,7 @@ const drawing: HTMLElement[] = [];
 let gameElem: HTMLElement | null;
 let storeElem: HTMLElement | null;
 let deckScreenElem: HTMLElement | null;
+let header: Root | null = null;
 
 let pickaxeTimer: NodeJS.Timer;
 
@@ -40,6 +45,10 @@ function startGame(): void {
 
   storeElem = document.getElementById("store");
   deckScreenElem = document.getElementById("deck-screen");
+  const headerElem = document.getElementById("header");
+  if (headerElem) {
+    header = createRoot(headerElem);
+  }
 
   if (deckScreenElem) {
     const close: HTMLElement | null =
@@ -53,14 +62,6 @@ function startGame(): void {
 }
 
 function updateResources(): void {
-  for (const resource in resources) {
-    const elem = document.querySelector(".inventory-slot." + resource);
-    if (elem) {
-      const e: HTMLElement | null = elem.querySelector(".current");
-      if (e) e.innerText = String(resources[resource]);
-    }
-  }
-
   if (storeElem) {
     for (let i = 0; i < storeElem.children.length; i++) {
       const product = storeElem.children[i] as HTMLElement;
@@ -74,6 +75,18 @@ function updateResources(): void {
       product.classList.toggle("unaffordable", !isAffordable(product));
     }
   }
+
+  if (header)
+    header.render(
+      <Inventory
+        level={resources.stairs}
+        max={MAX_LEVEL}
+        stone={resources.stone}
+        iron={resources.iron}
+        diamond={resources.diamond}
+        tnt={resources.tnt}
+      />
+    );
 
   updateDeckScreen();
   updateBgColor();
@@ -128,7 +141,7 @@ function upgradeRandomCard(): void {
     }
 
     if (card != null) {
-      const data = `${card.dataset.resource} ${
+      const data = `${card.dataset.resource ?? ""} ${
         parseInt(String(card.dataset.value)) + 1
       }`;
       setCard(card, data);
@@ -249,7 +262,7 @@ function onProductClick(elem: HTMLElement): () => void {
 
         let targetPile = pile.discard;
 
-        const toolPile = protoCard.dataset.value + "Slot";
+        const toolPile = String(protoCard.dataset.value) + "Slot";
         if (toolPile in pile) {
           targetPile = pile.pickaxeSlot;
 
@@ -508,7 +521,9 @@ function getCardHTML(resource: string, value: string | number): string {
   } else if (isNaN(parseInt(String(value)))) {
     topHTML = `<span class="name label">${resource} ${value}</span>`;
     const timer = getTool(resource)?.timer;
-    bottomHTML = `<div class="description label">Mines a card every ${timer}s.</div>`;
+    bottomHTML = `<div class="description label">Mines a card every ${
+      timer ?? ""
+    }s.</div>`;
   } else {
     topHTML = `<div class="top label"><span className="count">${value}</span></div>`;
     bottomHTML = `<div class="bottom label"><span className="count">${value}</span></div>`;

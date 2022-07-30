@@ -1,11 +1,15 @@
 {
   "compilerOptions": {
-    "outDir": "./dist/",
-    "noImplicitAny": true,
-    "module": "es6",
-    "target": "es5",
+    "baseUrl": ".",
+    "esModuleInterop": true,
+    "isolatedModules": true,
     "jsx": "react",
-    "allowJs": true,
-    "moduleResolution": "node"
-  }
+    "module": "commonjs",
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "strict": true,
+    "target": "es2019"
+  },
+  "include": ["src/**/*"]
 }
