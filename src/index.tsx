@@ -1,5 +1,6 @@
 import React from "react";
 import { createRoot, Root } from "react-dom/client";
+import { Card } from "./Card";
 import { Inventory } from "./Inventory";
 
 interface Pile {
@@ -225,7 +226,9 @@ function moveCard(cardElem: HTMLElement, toPile: Pile): HTMLElement {
 
 function onCardMovementComplete(elem: HTMLElement): () => void {
   return () => {
-    elem.style.zIndex = String(100 - parseFloat(elem.style.zIndex));
+    console.log(elem.style.zIndex);
+    elem.style.zIndex = String(parseFloat(elem.style.zIndex) - 100);
+    console.log(elem.style.zIndex);
     elem.classList.remove("flipping-up", "flipping-down");
 
     const i = drawing.indexOf(elem);
@@ -502,53 +505,10 @@ function setCard(cardElem: HTMLElement, data: string): void {
   const parts = data.split(" ");
   const resource = parts[0];
   const value = parts[1];
-  cardElem.innerHTML = getCardHTML(resource, value);
   cardElem.dataset.resource = resource;
   cardElem.dataset.value = value;
-}
-
-function getCardHTML(resource: string, value: string | number): string {
-  let contentHTML = "";
-  let topHTML = "";
-  let bottomHTML = "";
-
-  if (resource == "stairs" || resource == "upgrade") {
-    topHTML = `<span class="name label">${resource}</span>`;
-    bottomHTML =
-      resource == "stairs"
-        ? '<div class="description label">Descend one level deeper.</div>'
-        : '<div class="description label">Upgrade a resource card.</div>';
-  } else if (isNaN(parseInt(String(value)))) {
-    topHTML = `<span class="name label">${resource} ${value}</span>`;
-    const timer = getTool(resource)?.timer;
-    bottomHTML = `<div class="description label">Mines a card every ${
-      timer ?? ""
-    }s.</div>`;
-  } else {
-    topHTML = `<div class="top label"><span className="count">${value}</span></div>`;
-    bottomHTML = `<div class="bottom label"><span className="count">${value}</span></div>`;
-  }
-
-  if (value == "pickaxe") {
-    contentHTML = `<img src="img/${resource}_${value}.png" />`;
-  } else {
-    for (let i = 0; i < value; i++) {
-      contentHTML += `<img src="img/${resource}_icon.png" />`;
-    }
-  }
-
-  return `
-        <div class="wrapper">
-            <div class="body">
-                <div class="front">
-                    ${topHTML}
-                    <div class="content">${contentHTML}</div>
-                    ${bottomHTML}
-                </div>
-                <div class="back"></div>
-            </div>
-        </div>
-    `;
+  const container = createRoot(cardElem);
+  container.render(<Card resource={resource} value={value} />);
 }
 
 const MAX_INVENTORY = 999;
@@ -603,7 +563,7 @@ const TOOLS: {
   ],
 };
 
-function getTool(resource: string, offset = 0): Pickaxe | undefined {
+export function getTool(resource: string, offset = 0): Pickaxe | undefined {
   const tool = TOOLS.pickaxe;
   for (let i = 0; i < tool.length; i++) {
     if (tool[i].card.startsWith(resource)) {
