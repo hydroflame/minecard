@@ -5,24 +5,24 @@ let pile: any = {
   cartSlot: { cards: [] as any[] },
 };
 
-let drawing: any[] = [];
+let drawing: HTMLElement[] = [];
 
-let gameElem: any;
-let gameRect: any;
+let gameElem: HTMLElement | null;
+let gameRect: DOMRect;
 let storeElem: any;
 let deckScreenElem: any;
 
-let pickaxeTimer: any;
+let pickaxeTimer: NodeJS.Timer;
 
 let resources: any = { stone: 0, iron: 0, diamond: 0, tnt: 0, stairs: 0 };
 
-function startGame() {
+function startGame(): void {
   for (let id in pile) {
     pile[id].elem = document.getElementById(id);
   }
 
   gameElem = document.getElementById("game");
-  gameRect = gameElem.getBoundingClientRect();
+  if (gameElem) gameRect = gameElem.getBoundingClientRect();
 
   storeElem = document.getElementById("store");
   deckScreenElem = document.getElementById("deck-screen");
@@ -34,7 +34,7 @@ function startGame() {
   updateResources();
 }
 
-function updateResources() {
+function updateResources(): void {
   for (let resource in resources) {
     let elem = document.querySelector(".inventory-slot." + resource);
     if (elem) {
@@ -57,7 +57,7 @@ function updateResources() {
   updateBgColor();
 }
 
-function shuffleCards(cardElems: any) {
+function shuffleCards<T>(cardElems: T[]): T[] {
   const shuffledCards: any[] = [];
   while (cardElems.length) {
     const r = Math.floor(Math.random() * cardElems.length);
@@ -67,7 +67,7 @@ function shuffleCards(cardElems: any) {
   return shuffledCards;
 }
 
-function drawCard() {
+function drawCard(): void {
   if (pile.deck.cards.length == 0) return;
 
   const elem = pile.deck.cards[pile.deck.cards.length - 1];
@@ -82,17 +82,17 @@ function drawCard() {
   setTimeout(() => applyCard(elem), 300);
 }
 
-function applyCard(card: any) {
+function applyCard(card: HTMLElement): void {
   if (card.dataset.resource == "upgrade") {
     upgradeRandomCard();
   } else {
-    adjustResource(card.dataset.resource, card.dataset.value);
+    adjustResource(card.dataset.resource ?? "", card.dataset.value);
   }
 }
 
-function upgradeRandomCard() {
+function upgradeRandomCard(): void {
   if (pile.discard.cards.length > 0) {
-    let card;
+    let card: HTMLElement | null = null;
     for (let i = pile.discard.cards.length - 1; i >= 0; i--) {
       const c = pile.discard.cards[i];
       if (
@@ -107,15 +107,15 @@ function upgradeRandomCard() {
 
     if (card != null) {
       const data = `${card.dataset.resource} ${
-        parseInt(card.dataset.value) + 1
+        parseInt(String(card.dataset.value)) + 1
       }`;
       setCard(card, data);
     }
   }
 }
 
-function adjustResource(resource: any, value: any) {
-  const count = parseInt(value);
+function adjustResource(resource: string, value: unknown): void {
+  const count = parseInt(String(value));
   if (resource in resources && !isNaN(count)) {
     const max = resource == "stairs" ? MAX_LEVEL : MAX_INVENTORY;
     resources[resource] = Math.max(
@@ -133,8 +133,8 @@ function adjustResource(resource: any, value: any) {
   }
 }
 
-function shuffleDiscardIntoDeck() {
-  const shuffledCards = shuffleCards(pile.discard.cards);
+function shuffleDiscardIntoDeck(): void {
+  const shuffledCards = shuffleCards<HTMLElement>(pile.discard.cards);
   pile.discard.cards = [];
 
   for (let i = 0; i < shuffledCards.length; i++) {
@@ -143,7 +143,7 @@ function shuffleDiscardIntoDeck() {
   }
 }
 
-function addCardToPile(pile: any, cardElem: any, index: any) {
+function addCardToPile(pile: any, cardElem: HTMLElement, index: number): void {
   if (pile.cards) {
     pile.cards.push(cardElem);
   }
@@ -157,7 +157,13 @@ function addCardToPile(pile: any, cardElem: any, index: any) {
   cardElem.style.transform = `translate(${x}px,${y}px) rotate(${r}deg)`;
 }
 
-function getOffset(index: any) {
+interface Offset {
+  x: number;
+  y: number;
+  r: number;
+}
+
+function getOffset(index: number): Offset {
   return {
     x: Math.random() * 4 - 2,
     y: index * -2 + (Math.random() - 0.5),
@@ -165,7 +171,7 @@ function getOffset(index: any) {
   };
 }
 
-function moveCard(cardElem: any, toPile: any) {
+function moveCard(cardElem: HTMLElement, toPile: any): HTMLElement {
   drawing.push(cardElem);
 
   const moveDuration = 1000;
@@ -180,7 +186,7 @@ function moveCard(cardElem: any, toPile: any) {
   return cardElem;
 }
 
-function onCardMovementComplete() {
+function onCardMovementComplete(): void {
   this.style.zIndex -= 100;
   this.classList.remove("flipping-up", "flipping-down");
 
@@ -323,7 +329,7 @@ function updateBgColor(): void {
   const g = rightColor[1] * p + leftColor[1] * (1 - p);
   const b = rightColor[2] * p + leftColor[2] * (1 - p);
 
-  gameElem.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+  if (gameElem) gameElem.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
 }
 
 function makeStartingDeck(): void {
@@ -344,7 +350,7 @@ function makeStartingDeck(): void {
 
 function createDeckCard(data: string): HTMLDivElement {
   const cardElem = createCard(data);
-  gameElem.appendChild(cardElem);
+  if (gameElem) gameElem.appendChild(cardElem);
   return cardElem;
 }
 
