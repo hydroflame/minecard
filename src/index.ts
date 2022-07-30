@@ -515,7 +515,23 @@ const STORE_CONTENTS = [
   { ability: "purge", cost: "tnt 1", level: 10 },
 ];
 
-const TOOLS: any = {
+interface Pickaxe {
+  card: string;
+  cost?: string;
+  timer: number;
+}
+
+interface Cart {
+  card: string;
+  cost: string;
+  inventoryIncrease: number;
+}
+
+const TOOLS: {
+  [key: string]: any;
+  pickaxe: Pickaxe[];
+  cart: Cart[];
+} = {
   pickaxe: [
     { card: "old pickaxe", timer: 1.5 },
     { card: "stone pickaxe", cost: "stone 15", timer: 1.25 },
@@ -527,9 +543,10 @@ const TOOLS: any = {
 
 function getTool(data: any, offset = 0) {
   if (data.value in TOOLS) {
-    for (let i = 0; i < TOOLS[data.value].length; i++) {
-      if (TOOLS[data.value][i].card.startsWith(data.resource)) {
-        let toolData = TOOLS[data.value][i + offset];
+    const tool = TOOLS[data.value];
+    for (let i = 0; i < tool.length; i++) {
+      if (tool[i].card.startsWith(data.resource)) {
+        let toolData = tool[i + offset];
         if (toolData) toolData.tool = data.value;
         return toolData;
       }
@@ -537,7 +554,7 @@ function getTool(data: any, offset = 0) {
   }
 }
 
-function getDestroyCost() {
+function getDestroyCost(): number {
   const deckSize = pile.deck.cards.concat(pile.discard.cards).length;
   return Math.ceil(2000 / (deckSize * deckSize));
 }
