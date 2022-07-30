@@ -205,26 +205,28 @@ function moveCard(cardElem: HTMLElement, toPile: Pile): HTMLElement {
   cardElem.style.zIndex = String(100 + newIndex);
 
   addCardToPile(toPile, cardElem, newIndex);
-  setTimeout(onCardMovementComplete.bind(cardElem), moveDuration);
+  setTimeout(onCardMovementComplete(cardElem), moveDuration);
 
   return cardElem;
 }
 
-function onCardMovementComplete(this: HTMLElement): void {
-  this.style.zIndex = String(100 - parseFloat(this.style.zIndex));
-  this.classList.remove("flipping-up", "flipping-down");
+function onCardMovementComplete(elem: HTMLElement): () => void {
+  return () => {
+    elem.style.zIndex = String(100 - parseFloat(elem.style.zIndex));
+    elem.classList.remove("flipping-up", "flipping-down");
 
-  const i = drawing.indexOf(this);
-  if (i > -1) drawing.splice(i, 1);
+    const i = drawing.indexOf(elem);
+    if (i > -1) drawing.splice(i, 1);
 
-  if (pile.deck.cards.length == 0 && drawing.length == 0) {
-    shuffleDiscardIntoDeck();
-  }
+    if (pile.deck.cards.length == 0 && drawing.length == 0) {
+      shuffleDiscardIntoDeck();
+    }
 
-  if (this.dataset.value === "pickaxe") {
-    const tool = getTool(this.dataset.resource ?? "");
-    if (tool) tryApplyTool(tool);
-  }
+    if (elem.dataset.value === "pickaxe") {
+      const tool = getTool(elem.dataset.resource ?? "");
+      if (tool) tryApplyTool(tool);
+    }
+  };
 }
 
 function onProductClick(elem: HTMLElement): () => void {
@@ -436,7 +438,7 @@ function createProduct(data: StoreItem): HTMLDivElement {
       const cardElem = createCard(data.card);
       const o = getOffset(i);
       cardElem.style.transform = `translate(${o.x}px, ${o.y}px) rotate(${o.r}deg)`;
-      (cardElem as any).style.zIndex = i;
+      cardElem.style.zIndex = String(i);
       productElem.appendChild(cardElem);
     }
   } else if (data.ability) {
@@ -543,8 +545,8 @@ interface StartingCardCount {
 }
 
 const STARTING_DECK: StartingCardCount[] = [
-  { card: "stone 1", count: 1 },
-  { card: "tnt 100", count: 1 },
+  { card: "stone 1", count: 8 },
+  { card: "stairs 1", count: 1 },
 ];
 
 interface StoreItem {
