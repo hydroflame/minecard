@@ -279,6 +279,7 @@ function isAffordable(productElem: HTMLElement): boolean {
 }
 
 function showDeckScreen(): void {
+  if (!deckScreenElem) return;
   deckScreenElem.style.display = "flex";
 
   const container = deckScreenElem.querySelector(".card-container");
