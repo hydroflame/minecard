@@ -1,8 +1,8 @@
-let pile: any = {
-  deck: { cards: [] as any[] },
-  discard: { cards: [] as any[] },
-  pickaxeSlot: { cards: [] as any[] },
-  cartSlot: { cards: [] as any[] },
+let pile = {
+  deck: { cards: [] as any[], elem: null as HTMLElement | null },
+  discard: { cards: [] as any[], elem: null as HTMLElement | null },
+  pickaxeSlot: { cards: [] as any[], elem: null as HTMLElement | null },
+  cartSlot: { cards: [] as any[], elem: null as HTMLElement | null },
 };
 
 let drawing: HTMLElement[] = [];
@@ -17,9 +17,10 @@ let pickaxeTimer: NodeJS.Timer;
 let resources: any = { stone: 0, iron: 0, diamond: 0, tnt: 0, stairs: 0 };
 
 function startGame(): void {
-  for (let id in pile) {
-    pile[id].elem = document.getElementById(id);
-  }
+  pile.deck.elem = document.getElementById("deck");
+  pile.discard.elem = document.getElementById("discard");
+  pile.pickaxeSlot.elem = document.getElementById("pickaxeSlot");
+  pile.cartSlot.elem = document.getElementById("cartSlot");
 
   gameElem = document.getElementById("game");
   if (gameElem) gameRect = gameElem.getBoundingClientRect();
@@ -224,7 +225,7 @@ function onProductClick(): void {
 
       const toolPile = protoCard.dataset.value + "Slot";
       if (toolPile in pile) {
-        targetPile = pile[toolPile];
+        targetPile = pile.pickaxeSlot;
 
         const nextTool = getTool(protoCard.dataset, 1);
         replaceProduct(this.parentElement, nextTool);
