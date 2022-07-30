@@ -297,6 +297,7 @@ function showDeckScreen(): void {
 }
 
 function updateDeckScreen(): void {
+  if (!deckScreenElem) return;
   if (deckScreenElem.style.display != "none") {
     const cost = getDestroyCost();
     const count: HTMLElement | null =
