@@ -485,18 +485,6 @@ function setProductData(productElem: HTMLElement, data: StoreItem): void {
   }
 }
 
-function getBuyButtonHTML(data: string): string {
-  const parts = data.split(" ");
-  if (data) {
-    return `
-            <span class="resource-count">${parts[1]}</span>
-            <div class="resource-icon ${parts[0]}"></div>
-        `;
-  } else {
-    return '<span class="resource-count">Free</span>';
-  }
-}
-
 function createCard(data: string): HTMLDivElement {
   const cardElem = document.createElement("div");
   cardElem.classList.add("card");
