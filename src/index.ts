@@ -336,7 +336,7 @@ function closeDeckScreen(): void {
   }
 }
 
-function tryRemoveCard(data: any, pile: Pile): boolean {
+function tryRemoveCard(data: DOMStringMap, pile: Pile): boolean {
   for (let i = 0; i < pile.cards.length; i++) {
     const card = pile.cards[i];
     if (
