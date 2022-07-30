@@ -9,7 +9,7 @@ let drawing: HTMLElement[] = [];
 
 let gameElem: HTMLElement | null;
 let gameRect: DOMRect;
-let storeElem: any;
+let storeElem: HTMLElement | null;
 let deckScreenElem: any;
 
 let pickaxeTimer: NodeJS.Timer;
@@ -44,15 +44,18 @@ function updateResources(): void {
     }
   }
 
-  for (let i = 0; i < storeElem.children.length; i++) {
-    let product = storeElem.children[i];
+  if (storeElem)
+    for (let i = 0; i < storeElem.children.length; i++) {
+      let product = storeElem.children[i] as HTMLElement;
 
-    if (product.dataset.ability == "purge") {
-      product.dataset.cost = getDestroyCost();
-      product.querySelector(".resource-count").innerText = getDestroyCost();
+      if (product.dataset.ability == "purge") {
+        product.dataset.cost = String(getDestroyCost());
+        const count: HTMLElement | null =
+          product.querySelector(".resource-count");
+        if (count) count.innerText = String(getDestroyCost());
+      }
+      product.classList.toggle("unaffordable", !isAffordable(product));
     }
-    product.classList.toggle("unaffordable", !isAffordable(product));
-  }
 
   updateDeckScreen();
   updateBgColor();
