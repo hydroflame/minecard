@@ -19,7 +19,7 @@ const drawing: HTMLElement[] = [];
 let gameElem: HTMLElement | null;
 let gameRect: DOMRect;
 let storeElem: HTMLElement | null;
-let deckScreenElem: any;
+let deckScreenElem: HTMLElement | null;
 
 let pickaxeTimer: NodeJS.Timer;
 
@@ -43,7 +43,11 @@ function startGame(): void {
   storeElem = document.getElementById("store");
   deckScreenElem = document.getElementById("deck-screen");
 
-  deckScreenElem.querySelector(".close-button").onclick = closeDeckScreen;
+  if (deckScreenElem) {
+    const close: HTMLElement | null =
+      deckScreenElem.querySelector(".close-button");
+    if (close) close.onclick = closeDeckScreen;
+  }
 
   makeStartingDeck();
   makeStore();
@@ -294,7 +298,9 @@ function showDeckScreen(): void {
 function updateDeckScreen(): void {
   if (deckScreenElem.style.display != "none") {
     const cost = getDestroyCost();
-    deckScreenElem.querySelector(".resource-count").innerText = cost;
+    const count: HTMLElement | null =
+      deckScreenElem.querySelector(".resource-count");
+    if (count) count.innerText = String(cost);
     deckScreenElem.classList.toggle("unaffordable", resources.tnt < cost);
   }
 }
