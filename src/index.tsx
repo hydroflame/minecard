@@ -1,7 +1,8 @@
 import React from "react";
 import { createRoot, Root } from "react-dom/client";
 import { BuyButtonText } from "./BuyButtonText";
-import { Card } from "./Card";
+import { CardContent } from "./CardContent";
+import { DeckScreen } from "./DeckScreen";
 import { Inventory } from "./Inventory";
 import "./style.scss";
 
@@ -37,7 +38,7 @@ const resources: {
   diamond: number;
   tnt: number;
   stairs: number;
-} = { stone: 0, iron: 1, diamond: 0, tnt: 0, stairs: 0 };
+} = { stone: 0, iron: 0, diamond: 0, tnt: 999, stairs: 0 };
 
 function startGame(): void {
   pile.deck.elem = document.getElementById("deck");
@@ -305,9 +306,12 @@ function showDeckScreen(): void {
   if (!deckScreenElem) return;
   deckScreenElem.style.display = "flex";
 
+  // const cards = pile.deck.cards.concat(pile.discard.cards);
+  // const root = createRoot(deckScreenElem);
+  // root.render(<DeckScreen cards={cards} />);
+
   const container = deckScreenElem.querySelector(".card-container");
   const cards = pile.deck.cards.concat(pile.discard.cards);
-
   for (let i = 0; i < cards.length; i++) {
     const clone = cards[i].cloneNode(true) as HTMLElement;
     clone.style.transform = "";
@@ -500,7 +504,7 @@ function setCard(cardElem: HTMLElement, data: string): void {
   cardElem.dataset.resource = resource;
   cardElem.dataset.value = value;
   const container = createRoot(cardElem);
-  container.render(<Card resource={resource} value={value} />);
+  container.render(<CardContent resource={resource} value={value} />);
 }
 
 const MAX_INVENTORY = 999;
