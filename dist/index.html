@@ -1,1 +1,35 @@
-<!doctype html><html lang="en"><head><meta charset="UTF-8"/><title>Mine Cards</title><link rel="stylesheet" href="style/style.css"/><script defer="defer" src="main.js"></script></head><body><div id="game"><div id="header"><div class="inventory-slot stairs"><div class="label">Level:</div><div class="resource-count"><span class="current">0</span>/<span class="max">100</span></div></div><div class="inventory-slot stone"><div class="stone resource-icon"></div><div class="resource-count"><span class="current">0</span></div></div><div class="inventory-slot iron"><div class="iron resource-icon"></div><div class="resource-count"><span class="current">0</span></div></div><div class="inventory-slot diamond"><div class="diamond resource-icon"></div><div class="resource-count"><span class="current">0</span></div></div><div class="inventory-slot tnt"><div class="tnt resource-icon"></div><div class="resource-count"><span class="current">0</span></div></div></div><div id="store"></div><div class="deck-container"><div id="pickaxeSlot" class="card-pile"></div><div id="deck" class="card-pile"></div><div style="flex-grow: 1"></div><div id="discard" class="card-pile"></div></div><div id="deck-screen"><div class="instructions"><span>Destroy a card for <span class="resource-count">1</span><span class="resource-icon tnt"></span>.</span> <span>The fewer cards in your deck, the more it costs to destroy them.</span></div><div class="scroll-area"><div class="card-container"></div></div><div class="close-button">✖</div></div><div id="victory"><div>VICTORY!</div></div></div></body></html>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Mine Cards</title>
+    <script defer="defer" src="main.js"></script>
+  </head>
+  <body>
+    <div id="game">
+      <div id="header"></div>
+      <div id="store"></div>
+      <div class="deck-container">
+        <div id="pickaxeSlot" class="card-pile"></div>
+        <div id="deck" class="card-pile"></div>
+        <div style="flex-grow: 1"></div>
+        <div id="discard" class="card-pile"></div>
+      </div>
+      <div id="deck-screen">
+        <div class="instructions">
+          <span
+            >Destroy a card for <span class="resource-count">1</span
+            ><span class="resource-icon tnt"></span>.</span
+          >
+          <span
+            >The fewer cards in your deck, the more it costs to destroy
+            them.</span
+          >
+        </div>
+        <div class="scroll-area"><div class="card-container"></div></div>
+        <div class="close-button">✖</div>
+      </div>
+      <div id="victory"><div>VICTORY!</div></div>
+    </div>
+  </body>
+</html>

@@ -11,6 +11,10 @@ module.exports = {
         use: "ts-loader",
         exclude: /node_modules/,
       },
+      {
+        test: /\.s[ac]ss$/i,
+        use: ["style-loader", "css-loader", "sass-loader"],
+      },
     ],
   },
   resolve: {
@@ -21,10 +25,7 @@ module.exports = {
       template: "src/index.html",
     }),
     new CopyPlugin({
-      patterns: [
-        { from: "public/img", to: "img" },
-        { from: "public/style", to: "style" },
-      ],
+      patterns: [{ from: "public/img", to: "img" }],
     }),
   ],
   output: {

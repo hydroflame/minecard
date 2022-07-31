@@ -3,6 +3,7 @@ import { createRoot, Root } from "react-dom/client";
 import { BuyButtonText } from "./BuyButtonText";
 import { Card } from "./Card";
 import { Inventory } from "./Inventory";
+import "./style.scss";
 
 interface Pile {
   cards: HTMLElement[];
@@ -36,7 +37,7 @@ const resources: {
   diamond: number;
   tnt: number;
   stairs: number;
-} = { stone: 0, iron: 0, diamond: 0, tnt: 0, stairs: 0 };
+} = { stone: 0, iron: 1, diamond: 0, tnt: 0, stairs: 0 };
 
 function startGame(): void {
   pile.deck.elem = document.getElementById("deck");

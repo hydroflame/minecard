@@ -28,12 +28,12 @@ export const Card = ({ resource, value }: IProps): ReactElement => {
             )}
             <div className="content">
               {value === "pickaxe" ? (
-                <img src={`img/${resource}_${value}.png`} />
+                <img src={`img/${resource}_${value}.svg`} />
               ) : (
                 Array(parseInt(value))
                   .fill(0)
                   .map((_, i) => (
-                    <img key={i} src={`img/${resource}_icon.png`} />
+                    <img key={i} src={`img/${resource}_icon.svg`} />
                   ))
               )}
             </div>
