@@ -20,8 +20,8 @@ The "Vitality" card gives the player an amount of vitality based on how well the
 The second way to use vitality is to spend it
 in order to improve your ecosystem.
 Some example of upgrades:
-- Make the size of the goldilock zone (and vitality gains)
-- Improve the strength of overpopulation (reduce the size of the goldilock zone)
+- Increase the size of the goldilock zone (and vitality gains)
+- Improve the strength of overpopulation (and reduce the size of the goldilock zone)
 - purchase nature cards (basic type of cards)
 - purchase environment cards. (see below)
 - upgrade environment cards.
@@ -60,12 +60,12 @@ Example of cards:
 - Fertilizer: boosts flora gain for 5 turns.
 
 (Environment)
-Hourglass: Increases card flip rate by 5%
-Land: Increases equilibrium range by 5%
-Vitality boost: Increases vitality gain by 5%
-Rocky coast: reduces the bad effects of entropy cards by 5%.
+- Hourglass: Increases card flip rate by 5%
+- Land: Increases equilibrium range by 5%
+- Vitality boost: Increases vitality gain by 5%
+- Rocky coast: reduces the bad effects of entropy cards by 5%.
 
-Prestiging: After acquiring enough resources players can prestige to convert all their vitality in  life. The next tier resource. Card power add lofe and vitality together to calculate their power.
+Prestiging: After acquiring enough resources players can prestige to convert all their vitality in  life. The next tier resource. Card power add life and vitality together to calculate their power.
 Life can also be spent on powerful upgrades or cards.
 
 After gaining enough life the player automatically completes the "spring challenge". This is the basic challenge that everyone starts in without being aware. By completing a challenge players are awarded a universe card. These cards are never reset but only 3 of them can be active at any given time. Each challenges can be completed multiple times. Getting harder each time. To power up the associated universe card. Other challenges give different universe card.
