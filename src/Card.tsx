@@ -9,7 +9,12 @@ interface IProps {
 
 export const Card = ({ resource, value, onClick }: IProps): ReactElement => {
   return (
-    <div className="card" onClick={onClick}>
+    <div
+      className="card"
+      onClick={onClick}
+      data-resource={resource}
+      data-value={value}
+    >
       <CardContent resource={resource} value={value} />
     </div>
   );
