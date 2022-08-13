@@ -50,12 +50,12 @@ function startGame(): void {
   gameElem = document.getElementById("game");
 
   storeElem = document.getElementById("store");
-  deckScreenElem = document.getElementById("deck-screen-root");
   const headerElem = document.getElementById("header");
   if (headerElem) {
     header = createRoot(headerElem);
   }
 
+  deckScreenElem = document.getElementById("deck-screen-root");
   if (deckScreenElem) {
     deckScreenRoot = createRoot(deckScreenElem);
   }
