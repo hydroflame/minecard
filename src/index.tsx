@@ -324,6 +324,7 @@ function onDestroyCardClick(dataset: DOMStringMap): void {
     }
   }
   renderDeckScreen();
+  updateResources();
 }
 
 function tryRemoveCard(data: DOMStringMap, pile: Pile): boolean {
