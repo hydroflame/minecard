@@ -4,6 +4,7 @@ import { BuyButtonText } from "./BuyButtonText";
 import { CardContent } from "./CardContent";
 import { DeckScreen } from "./DeckScreen";
 import { Inventory } from "./Inventory";
+import { Store } from "./Store";
 import "./style.scss";
 
 interface Pile {
@@ -33,14 +34,22 @@ let deckScreenRoot: Root | null = null;
 
 let pickaxeTimer: NodeJS.Timer;
 
-const resources: {
+export interface Resources {
   [key: string]: number | undefined;
   stone: number;
   iron: number;
   diamond: number;
   tnt: number;
   stairs: number;
-} = { stone: 0, iron: 0, diamond: 0, tnt: 999, stairs: 0 };
+}
+
+const resources: Resources = {
+  stone: 0,
+  iron: 0,
+  diamond: 0,
+  tnt: 999,
+  stairs: 0,
+};
 
 function startGame(): void {
   pile.deck.elem = document.getElementById("deck");
@@ -201,7 +210,7 @@ interface Offset {
   r: number;
 }
 
-function getOffset(index: number): Offset {
+export function getOffset(index: number): Offset {
   return {
     x: Math.random() * 4 - 2,
     y: index * -2 + (Math.random() - 0.5),
@@ -382,6 +391,12 @@ function createDeckCard(data: string): HTMLDivElement {
 }
 
 function makeStore(): void {
+  if (storeElem) {
+    const storeRoot = createRoot(storeElem);
+    storeRoot.render(<Store resources={resources} items={STORE_CONTENTS} />);
+    return;
+  }
+
   STORE_CONTENTS.forEach(function (c) {
     if (!storeElem) return;
     const product = createProduct(c);
@@ -487,7 +502,7 @@ const STARTING_DECK: StartingCardCount[] = [
   { card: "stairs 1", count: 1 },
 ];
 
-interface StoreItem {
+export interface StoreItem {
   card?: string;
   ability?: string;
   cost: string;
