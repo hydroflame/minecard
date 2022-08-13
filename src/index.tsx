@@ -247,36 +247,35 @@ function onProductClick(elem: HTMLElement): () => void {
   return () => {
     const parent = elem.parentElement;
     if (!parent) return;
-    if (isAffordable(parent)) {
-      if (parent.dataset.ability == "purge") {
-        renderDeckScreen();
-      } else if (parent.dataset.card) {
-        adjustResource(
-          parent.dataset.resource ?? "",
-          -parseFloat(parent.dataset.cost ?? "0")
-        );
+    if (!isAffordable(parent)) return;
+    if (parent.dataset.ability == "purge") {
+      renderDeckScreen();
+    } else if (parent.dataset.card) {
+      adjustResource(
+        parent.dataset.resource ?? "",
+        -parseFloat(parent.dataset.cost ?? "0")
+      );
 
-        const protoCard: HTMLElement | null = parent.querySelector(".card");
-        if (!protoCard) return;
-        const newCard = createDeckCard(parent.dataset.card);
-        addCardToPile({ cards: [], elem: protoCard }, newCard, 0);
+      const protoCard: HTMLElement | null = parent.querySelector(".card");
+      if (!protoCard) return;
+      const newCard = createDeckCard(parent.dataset.card);
+      addCardToPile({ cards: [], elem: protoCard }, newCard, 0);
 
-        let targetPile = pile.discard;
+      let targetPile = pile.discard;
 
-        const toolPile = String(protoCard.dataset.value) + "Slot";
-        if (toolPile in pile) {
-          targetPile = pile.pickaxeSlot;
+      const toolPile = String(protoCard.dataset.value) + "Slot";
+      if (toolPile in pile) {
+        targetPile = pile.pickaxeSlot;
 
-          const nextTool = getTool(protoCard.dataset.resource ?? "", 1);
-          if (nextTool)
-            replaceProduct(parent, {
-              ...nextTool,
-              cost: nextTool.cost ?? "",
-            });
-        }
-
-        requestAnimationFrame(() => moveCard(newCard, targetPile));
+        const nextTool = getTool(protoCard.dataset.resource ?? "", 1);
+        if (nextTool)
+          replaceProduct(parent, {
+            ...nextTool,
+            cost: nextTool.cost ?? "",
+          });
       }
+
+      requestAnimationFrame(() => moveCard(newCard, targetPile));
     }
   };
 }
