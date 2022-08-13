@@ -129,27 +129,25 @@ function applyCard(card: HTMLElement): void {
 }
 
 function upgradeRandomCard(): void {
-  if (pile.discard.cards.length > 0) {
-    let card: HTMLElement | null = null;
-    for (let i = pile.discard.cards.length - 1; i >= 0; i--) {
-      const c = pile.discard.cards[i];
-      if (
-        (c.dataset.resource ?? "") in resources &&
-        c.dataset.resource != "stairs" &&
-        parseInt(String(c.dataset.value)) < 10
-      ) {
-        card = c;
-        break;
-      }
-    }
-
-    if (card != null) {
-      const data = `${card.dataset.resource ?? ""} ${
-        parseInt(String(card.dataset.value)) + 1
-      }`;
-      setCard(card, data);
+  if (pile.discard.cards.length === 0) return;
+  let card: HTMLElement | null = null;
+  for (let i = pile.discard.cards.length - 1; i >= 0; i--) {
+    const c = pile.discard.cards[i];
+    if (
+      (c.dataset.resource ?? "") in resources &&
+      c.dataset.resource != "stairs" &&
+      parseInt(String(c.dataset.value)) < 10
+    ) {
+      card = c;
+      break;
     }
   }
+
+  if (card == null) return;
+  const data = `${card.dataset.resource ?? ""} ${
+    parseInt(String(card.dataset.value)) + 1
+  }`;
+  setCard(card, data);
 }
 
 function adjustResource(resource: string, value: string | number): void {
