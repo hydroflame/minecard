@@ -29,6 +29,8 @@ let storeElem: HTMLElement | null;
 let deckScreenElem: HTMLElement | null;
 let header: Root | null = null;
 
+let deckScreenRoot: Root | null = null;
+
 let pickaxeTimer: NodeJS.Timer;
 
 const resources: {
@@ -48,16 +50,14 @@ function startGame(): void {
   gameElem = document.getElementById("game");
 
   storeElem = document.getElementById("store");
-  deckScreenElem = document.getElementById("deck-screen");
+  deckScreenElem = document.getElementById("deck-screen-root");
   const headerElem = document.getElementById("header");
   if (headerElem) {
     header = createRoot(headerElem);
   }
 
   if (deckScreenElem) {
-    const close: HTMLElement | null =
-      deckScreenElem.querySelector(".close-button");
-    if (close) close.onclick = closeDeckScreen;
+    deckScreenRoot = createRoot(deckScreenElem);
   }
 
   makeStartingDeck();
@@ -92,7 +92,6 @@ function updateResources(): void {
       />
     );
 
-  updateDeckScreen();
   updateBgColor();
 }
 
@@ -252,7 +251,7 @@ function onProductClick(elem: HTMLElement): () => void {
     if (!parent) return;
     if (isAffordable(parent)) {
       if (parent.dataset.ability == "purge") {
-        showDeckScreen();
+        renderDeckScreen();
       } else if (parent.dataset.card) {
         adjustResource(
           parent.dataset.resource ?? "",
@@ -302,60 +301,29 @@ export function isAffordable(productElem: HTMLElement): boolean {
   return true; // must be free
 }
 
-function showDeckScreen(): void {
-  if (!deckScreenElem) return;
-  deckScreenElem.style.display = "flex";
-
-  // const cards = pile.deck.cards.concat(pile.discard.cards);
-  // const root = createRoot(deckScreenElem);
-  // root.render(<DeckScreen cards={cards} />);
-
-  const container = deckScreenElem.querySelector(".card-container");
+function renderDeckScreen(): void {
+  if (!deckScreenRoot) return;
   const cards = pile.deck.cards.concat(pile.discard.cards);
-  for (let i = 0; i < cards.length; i++) {
-    const clone = cards[i].cloneNode(true) as HTMLElement;
-    clone.style.transform = "";
-    clone.classList.value = "card";
-    clone.onclick = onDestroyCardClick(clone);
-    if (container) container.appendChild(clone);
-  }
-
-  updateDeckScreen();
-}
-
-function updateDeckScreen(): void {
-  if (!deckScreenElem) return;
-  if (deckScreenElem.style.display != "none") {
-    const cost = getDestroyCost();
-    const count: HTMLElement | null =
-      deckScreenElem.querySelector(".resource-count");
-    if (count) count.innerText = String(cost);
-    deckScreenElem.classList.toggle("unaffordable", resources.tnt < cost);
-  }
-}
-
-function onDestroyCardClick(elem: HTMLElement): () => void {
-  return () => {
-    if (resources.tnt >= getDestroyCost()) {
-      if (!tryRemoveCard(elem.dataset, pile.deck)) {
-        tryRemoveCard(elem.dataset, pile.discard);
+  deckScreenRoot.render(
+    <DeckScreen
+      cards={cards}
+      onClick={(resource?: string, value?: string) =>
+        onDestroyCardClick({ resource, value })
       }
-      adjustResource("tnt", -getDestroyCost());
-      elem.classList.add("destroyed");
-      elem.onclick = null;
-    }
-  };
+      onClose={() => deckScreenRoot?.render(<></>)}
+      tnt={resources.tnt}
+    />
+  );
 }
 
-function closeDeckScreen(): void {
-  if (!deckScreenElem) return;
-  deckScreenElem.style.display = "none";
-
-  const container = deckScreenElem.querySelector(".card-container");
-
-  while (container && container.firstChild) {
-    container.removeChild(container.firstChild);
+function onDestroyCardClick(dataset: DOMStringMap): void {
+  if (resources.tnt >= getDestroyCost()) {
+    adjustResource("tnt", -getDestroyCost());
+    if (!tryRemoveCard(dataset, pile.deck)) {
+      tryRemoveCard(dataset, pile.discard);
+    }
   }
+  renderDeckScreen();
 }
 
 function tryRemoveCard(data: DOMStringMap, pile: Pile): boolean {
@@ -455,6 +423,8 @@ function createProduct(data: StoreItem): HTMLDivElement {
   productElem.classList.add("product");
 
   setProductData(productElem, data);
+
+  if (data.ability === "purge") data.cost = "tnt " + String(getDestroyCost());
 
   if (data.card) {
     for (let i = 0; i < 3; i++) {
@@ -568,7 +538,7 @@ export function getTool(resource: string, offset = 0): Pickaxe | undefined {
   }
 }
 
-function getDestroyCost(): number {
+export function getDestroyCost(): number {
   const deckSize = pile.deck.cards.concat(pile.discard.cards).length;
   return Math.ceil(2000 / (deckSize * deckSize));
 }

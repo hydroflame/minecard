@@ -1,16 +1,32 @@
 import React, { ReactElement } from "react";
+import { getDestroyCost } from "./index";
 import { Card } from "./Card";
 
 interface IProps {
   cards: HTMLElement[];
+  tnt: number;
+  onClose: () => void;
+  onClick: (resource?: string, value?: string) => void;
 }
 
-export const DeckScreen = ({ cards }: IProps): ReactElement => {
+export const DeckScreen = ({
+  cards,
+  onClick,
+  onClose,
+  tnt,
+}: IProps): ReactElement => {
   return (
-    <>
+    <div id="deck-screen" style={{ display: "flex" }}>
       <div className="instructions">
         <span>
-          Destroy a card for <span className="resource-count">1</span>
+          Destroy a card for{" "}
+          <span
+            className={`resource-count ${
+              tnt >= getDestroyCost() ? "" : "unaffordable"
+            }`}
+          >
+            {getDestroyCost()}
+          </span>
           <span className="resource-icon tnt"></span>.
         </span>
         <span>
@@ -19,15 +35,19 @@ export const DeckScreen = ({ cards }: IProps): ReactElement => {
       </div>
       <div className="scroll-area">
         <div className="card-container">
-          {cards.map((c) => (
+          {cards.map((c, i) => (
             <Card
+              key={i}
               resource={c.dataset.resource ?? ""}
               value={c.dataset.value ?? ""}
+              onClick={() => onClick(c.dataset.resource, c.dataset.value)}
             />
           ))}
         </div>
       </div>
-      <div className="close-button">✖</div>
-    </>
+      <div className="close-button" onClick={onClose}>
+        ✖
+      </div>
+    </div>
   );
 };
