@@ -273,7 +273,6 @@ function onProductClick(elem: HTMLElement): () => void {
           if (nextTool)
             replaceProduct(parent, {
               ...nextTool,
-              level: 0,
               cost: nextTool.cost ?? "",
             });
         }
@@ -495,22 +494,21 @@ interface StoreItem {
   card?: string;
   ability?: string;
   cost: string;
-  level: number;
 }
 
 const STORE_CONTENTS: StoreItem[] = [
-  { card: "old pickaxe", cost: "", level: 0 },
-  { card: "stone 1", cost: "", level: 1 },
-  { card: "stone 3", cost: "stone 5", level: 1 },
-  { card: "stone 5", cost: "stone 20", level: 1 },
-  { card: "iron 1", cost: "stone 50", level: 5 },
-  { card: "iron 3", cost: "iron 5", level: 5 },
-  { card: "iron 5", cost: "iron 20", level: 5 },
-  { card: "diamond 1", cost: "iron 50", level: 15 },
-  { card: "tnt 1", cost: "iron 1", level: 10 },
-  { card: "stairs 1", cost: "diamond 5", level: 5 },
-  { card: "upgrade 1", cost: "stone 30", level: 5 },
-  { ability: "purge", cost: "tnt 1", level: 10 },
+  { card: "old pickaxe", cost: "" },
+  { card: "stone 1", cost: "" },
+  { card: "stone 3", cost: "stone 5" },
+  { card: "stone 5", cost: "stone 20" },
+  { card: "iron 1", cost: "stone 50" },
+  { card: "iron 3", cost: "iron 5" },
+  { card: "iron 5", cost: "iron 20" },
+  { card: "diamond 1", cost: "iron 50" },
+  { card: "tnt 1", cost: "iron 1" },
+  { card: "stairs 1", cost: "diamond 5" },
+  { card: "upgrade 1", cost: "stone 30" },
+  { ability: "purge", cost: "tnt 1" },
 ];
 
 interface Pickaxe {
