@@ -16,17 +16,15 @@ export const DeckScreen = ({
   tnt,
 }: IProps): ReactElement => {
   return (
-    <div id="deck-screen" style={{ display: "flex" }}>
+    <div
+      id="deck-screen"
+      className={tnt >= getDestroyCost() ? "" : "unaffordable"}
+      style={{ display: "flex" }}
+    >
       <div className="instructions">
         <span>
           Destroy a card for{" "}
-          <span
-            className={`resource-count ${
-              tnt >= getDestroyCost() ? "" : "unaffordable"
-            }`}
-          >
-            {getDestroyCost()}
-          </span>
+          <span className="resource-count">{getDestroyCost()}</span>
           <span className="resource-icon tnt"></span>.
         </span>
         <span>
