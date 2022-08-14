@@ -1,9 +1,9 @@
 import React from "react";
 import { createRoot, Root } from "react-dom/client";
-import { BuyButtonText } from "./BuyButtonText";
 import { CardContent } from "./CardContent";
 import { DeckScreen } from "./DeckScreen";
 import { Inventory } from "./Inventory";
+import { rand } from "./rand";
 import { Store } from "./Store";
 import "./style.scss";
 
@@ -12,7 +12,7 @@ interface Pile {
   elem: HTMLElement | null;
 }
 
-const pile: {
+export const pile: {
   [key: string]: Pile | undefined;
   deck: Pile;
   discard: Pile;
@@ -26,10 +26,10 @@ const pile: {
 const drawing: HTMLElement[] = [];
 
 let gameElem: HTMLElement | null;
-let storeElem: HTMLElement | null;
 let deckScreenElem: HTMLElement | null;
-let header: Root | null = null;
 
+let storeRoot: Root | null = null;
+let header: Root | null = null;
 let deckScreenRoot: Root | null = null;
 
 let pickaxeTimer: NodeJS.Timer;
@@ -44,7 +44,7 @@ export interface Resources {
 }
 
 const resources: Resources = {
-  stone: 0,
+  stone: 30,
   iron: 0,
   diamond: 0,
   tnt: 999,
@@ -58,7 +58,6 @@ function startGame(): void {
 
   gameElem = document.getElementById("game");
 
-  storeElem = document.getElementById("store");
   const headerElem = document.getElementById("header");
   if (headerElem) {
     header = createRoot(headerElem);
@@ -70,25 +69,27 @@ function startGame(): void {
   }
 
   makeStartingDeck();
-  makeStore();
+
+  const storeElem = document.getElementById("store");
+  if (storeElem) {
+    storeRoot = createRoot(storeElem);
+    renderStore();
+  }
   updateResources();
 }
 
+function renderStore(): void {
+  if (!storeRoot) return;
+  storeRoot.render(
+    <Store
+      resources={resources}
+      items={STORE_CONTENTS}
+      onClick={onProductClick}
+    />
+  );
+}
+
 function updateResources(): void {
-  if (storeElem) {
-    for (let i = 0; i < storeElem.children.length; i++) {
-      const product = storeElem.children[i] as HTMLElement;
-
-      if (product.dataset.ability == "purge") {
-        product.dataset.cost = String(getDestroyCost());
-        const count: HTMLElement | null =
-          product.querySelector(".resource-count");
-        if (count) count.innerText = String(getDestroyCost());
-      }
-      product.classList.toggle("unaffordable", !isAffordable(product));
-    }
-  }
-
   if (header)
     header.render(
       <Inventory
@@ -101,6 +102,7 @@ function updateResources(): void {
       />
     );
 
+  renderStore();
   updateBgColor();
 }
 
@@ -195,7 +197,12 @@ function addCardToPile(pile: Pile, cardElem: HTMLElement, index: number): void {
   }
   if (!pile.elem) return;
   const rect = pile.elem.getBoundingClientRect();
-  const offset = getOffset(index);
+  const offset = getOffset(
+    (cardElem.dataset.resource ?? "") +
+      (cardElem.dataset.value ?? "") +
+      String(index),
+    index
+  );
   const gameRect = gameElem.getBoundingClientRect();
   const x = rect.left - gameRect.left + offset.x;
   const y = rect.top - gameRect.top + offset.y;
@@ -210,11 +217,11 @@ interface Offset {
   r: number;
 }
 
-export function getOffset(index: number): Offset {
+export function getOffset(seed: string, index: number): Offset {
   return {
-    x: Math.random() * 4 - 2,
-    y: index * -2 + (Math.random() - 0.5),
-    r: Math.random() * 4 - 2,
+    x: rand(seed + "0") * 4 - 2,
+    y: index * -2 + (rand(seed + "1") - 0.5),
+    r: rand(seed + "2") * 4 - 2,
   };
 }
 
@@ -252,41 +259,27 @@ function onCardMovementComplete(elem: HTMLElement): () => void {
   };
 }
 
-function onProductClick(elem: HTMLElement): () => void {
-  return () => {
-    const parent = elem.parentElement;
-    if (!parent) return;
-    if (!isAffordable(parent)) return;
-    if (parent.dataset.ability == "purge") {
-      renderDeckScreen();
-    } else if (parent.dataset.card) {
-      adjustResource(
-        parent.dataset.resource ?? "",
-        -parseFloat(parent.dataset.cost ?? "0")
-      );
+function onProductClick(storeItem: StoreItem, elem: HTMLElement): void {
+  if (!isItemAffordable(storeItem)) return;
+  if (storeItem.ability == "purge") {
+    renderDeckScreen();
+  } else if (storeItem.card) {
+    const parts = storeItem.cost.split(" ");
+    const resource = parts[0];
+    const cost = parts[1];
+    adjustResource(resource, -parseFloat(cost));
 
-      const protoCard: HTMLElement | null = parent.querySelector(".card");
-      if (!protoCard) return;
-      const newCard = createDeckCard(parent.dataset.card);
-      addCardToPile({ cards: [], elem: protoCard }, newCard, 0);
+    const newCard = createDeckCard(storeItem.card);
+    addCardToPile({ cards: [], elem: elem }, newCard, 0);
 
-      let targetPile = pile.discard;
+    let targetPile = pile.discard;
 
-      const toolPile = String(protoCard.dataset.value) + "Slot";
-      if (toolPile in pile) {
-        targetPile = pile.pickaxeSlot;
-
-        const nextTool = getTool(protoCard.dataset.resource ?? "", 1);
-        if (nextTool)
-          replaceProduct(parent, {
-            ...nextTool,
-            cost: nextTool.cost ?? "",
-          });
-      }
-
-      requestAnimationFrame(() => moveCard(newCard, targetPile));
+    if (storeItem.card.includes("pickaxe")) {
+      targetPile = pile.pickaxeSlot;
     }
-  };
+
+    requestAnimationFrame(() => moveCard(newCard, targetPile));
+  }
 }
 
 function tryApplyTool(data: Pickaxe): void {
@@ -294,6 +287,16 @@ function tryApplyTool(data: Pickaxe): void {
   clearInterval(pickaxeTimer);
   pickaxeTimer = setInterval(drawCard, data.timer * 1000);
   drawCard();
+}
+
+export function isItemAffordable(storeItem: StoreItem): boolean {
+  const parts = storeItem.cost.split(" ");
+  const resource = parts[0];
+  const cost = parts[1];
+  if (resource in resources) {
+    return (resources[resource] ?? 0) >= parseInt(cost);
+  }
+  return true; // must be free
 }
 
 export function isAffordable(productElem: HTMLElement): boolean {
@@ -390,88 +393,6 @@ function createDeckCard(data: string): HTMLDivElement {
   return cardElem;
 }
 
-function makeStore(): void {
-  if (storeElem) {
-    const storeRoot = createRoot(storeElem);
-    storeRoot.render(<Store resources={resources} items={STORE_CONTENTS} />);
-    return;
-  }
-
-  STORE_CONTENTS.forEach(function (c) {
-    if (!storeElem) return;
-    const product = createProduct(c);
-    storeElem.appendChild(product);
-    const e: HTMLElement | null = product.querySelector(".buy-button");
-    if (e) e.onclick = onProductClick(e);
-  });
-}
-
-function replaceProduct(productElem: HTMLElement, data?: StoreItem): void {
-  if (data == null) {
-    productElem.classList.add("soldout");
-    const buy: HTMLElement | null = productElem.querySelector(".buy-button");
-    if (buy) buy.onclick = null;
-    return;
-  }
-
-  setProductData(productElem, data);
-
-  const cards = productElem.querySelectorAll(".card");
-  for (let i = 0; i < cards.length; i++) {
-    setCard(cards[i] as HTMLElement, data.card ?? "");
-  }
-
-  const buyButton = productElem.querySelector(".buy-button");
-  if (buyButton) {
-    const container = createRoot(buyButton);
-    container.render(<BuyButtonText data={data.cost} />);
-  }
-
-  productElem.classList.toggle("unaffordable", !isAffordable(productElem));
-}
-
-function createProduct(data: StoreItem): HTMLDivElement {
-  const productElem = document.createElement("div");
-  productElem.classList.add("product");
-
-  setProductData(productElem, data);
-
-  if (data.ability === "purge") data.cost = "tnt " + String(getDestroyCost());
-
-  if (data.card) {
-    for (let i = 0; i < 3; i++) {
-      const cardElem = createCard(data.card);
-      const o = getOffset(i);
-      cardElem.style.transform = `translate(${o.x}px, ${o.y}px) rotate(${o.r}deg)`;
-      cardElem.style.zIndex = String(i);
-      productElem.appendChild(cardElem);
-    }
-  } else if (data.ability) {
-    const optionElem = document.createElement("div");
-    optionElem.classList.add(data.ability, "ability");
-    productElem.appendChild(optionElem);
-  }
-
-  const buyButton = document.createElement("div");
-  buyButton.classList.add("buy-button");
-  const container = createRoot(buyButton);
-  container.render(<BuyButtonText data={data.cost} />);
-  productElem.appendChild(buyButton);
-
-  return productElem;
-}
-
-function setProductData(productElem: HTMLElement, data: StoreItem): void {
-  productElem.dataset.card = data.card;
-  productElem.dataset.ability = data.ability;
-
-  if (data.cost) {
-    const costParts = data.cost.split(" ");
-    productElem.dataset.resource = costParts[0];
-    productElem.dataset.cost = costParts[1];
-  }
-}
-
 function createCard(data: string): HTMLDivElement {
   const cardElem = document.createElement("div");
   cardElem.classList.add("card");
@@ -509,7 +430,6 @@ export interface StoreItem {
 }
 
 const STORE_CONTENTS: StoreItem[] = [
-  { card: "old pickaxe", cost: "" },
   { card: "stone 1", cost: "" },
   { card: "stone 3", cost: "stone 5" },
   { card: "stone 5", cost: "stone 20" },
@@ -525,15 +445,15 @@ const STORE_CONTENTS: StoreItem[] = [
 
 interface Pickaxe {
   card: string;
-  cost?: string;
+  cost: string;
   timer: number;
 }
 
-const TOOLS: {
+export const TOOLS: {
   pickaxe: Pickaxe[];
 } = {
   pickaxe: [
-    { card: "old pickaxe", timer: 1.5 },
+    { card: "old pickaxe", cost: "", timer: 1.5 },
     { card: "stone pickaxe", cost: "stone 15", timer: 1.25 },
     { card: "iron pickaxe", cost: "iron 15", timer: 1 },
     { card: "diamond pickaxe", cost: "diamond 15", timer: 0.5 },
