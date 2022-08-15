@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   id="svg8"
+   version="1.1"
+   viewBox="0 0 13.229167 13.229167"
+   height="50"
+   width="50"
+   sodipodi:docname="fauna.svg"
+   inkscape:version="1.1.1 (c3084ef, 2021-09-22)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <sodipodi:namedview
+     id="namedview320977"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="11.313709"
+     inkscape:cx="41.763494"
+     inkscape:cy="20.461902"
+     inkscape:window-width="1978"
+     inkscape:window-height="1127"
+     inkscape:window-x="1346"
+     inkscape:window-y="48"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg8"
+     units="px" />
+  <defs
+     id="defs2">
+    <style
+       id="style1356">.cls-1{fill:#ed1b24;fill-rule:evenodd;}</style>
+  </defs>
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <path
+     id="path4157"
+     style="fill:#3f7a4d;fill-opacity:1;stroke-width:0.850709;stroke-linecap:round"
+     d="M 2.9746326,2.9239233 C 2.5925995,2.9190402 2.3430769,3.1405131 2.3502828,3.733329 c 0.029753,2.4477559 2.3207404,3.6184218 2.3207404,3.6184218 0,0 -1.7554319,1.7293926 -0.3570369,2.7936342 C 5.5770448,11.10663 6.4976083,9.6195352 6.6644797,9.3218454 6.8313511,9.6195352 7.7519146,11.10663 9.0149731,10.145385 10.413367,9.0811434 8.6579362,7.3517508 8.6579362,7.3517508 c 0,0 2.2909868,-1.1706659 2.3207398,-3.6184218 0.02975,-2.4477558 -4.3141963,1.4367263 -4.3141963,1.4367263 0,0 -2.4944529,-2.2308527 -3.6898471,-2.246132 z" />
+</svg>

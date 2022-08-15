@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   id="svg8"
+   version="1.1"
+   viewBox="0 0 13.229167 13.229167"
+   height="13.229167mm"
+   width="13.229167mm"
+   sodipodi:docname="flora.svg"
+   inkscape:version="1.1.1 (c3084ef, 2021-09-22)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <sodipodi:namedview
+     id="namedview320977"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="8"
+     inkscape:cx="39.1875"
+     inkscape:cy="13.4375"
+     inkscape:window-width="1978"
+     inkscape:window-height="1127"
+     inkscape:window-x="1072"
+     inkscape:window-y="28"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg8" />
+  <defs
+     id="defs2">
+    <style
+       id="style1356">.cls-1{fill:#ed1b24;fill-rule:evenodd;}</style>
+  </defs>
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <path
+     style="fill:#0b6623;fill-opacity:1;stroke-width:1.03782;stroke-linecap:round"
+     d="M 4.5364087,11.386483 4.0267297,11.21659 c 0,0 0.3640564,-2.5726672 1.504767,-3.9075411 1.1407105,-1.334874 2.9124523,-2.4755845 2.9124523,-2.4755845 0,0 -2.3785027,0.9222766 -3.2765088,2.0872575 -0.8980062,1.1649808 -1.3348738,2.5483966 -1.3348738,2.5483966 0,0 -2.0144465,-1.8202835 -0.9222768,-4.0531637 1.0921695,-2.23288 4.2332135,-2.1748959 5.3394959,-2.4755844 1.1062821,-0.3006885 2.3542325,-1.1407105 2.3542325,-1.1407105 0,0 0.388326,3.9803518 -1.5775786,6.3345839 -1.965905,2.3542322 -4.0531625,1.6261195 -4.0531625,1.6261195 0,0 -0.1811659,0.3525307 -0.2640305,0.6837357 -0.083308,0.332973 -0.1728377,0.942384 -0.1728377,0.942384 z"
+     id="path3383"
+     sodipodi:nodetypes="ccscsczzczcsc" />
+</svg>
